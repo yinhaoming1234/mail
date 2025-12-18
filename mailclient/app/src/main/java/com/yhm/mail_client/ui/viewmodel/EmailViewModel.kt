@@ -149,6 +149,15 @@ class EmailViewModel(application: Application) : AndroidViewModel(application) {
         _currentAccount.value = account
     }
     
+    fun logout() {
+        viewModelScope.launch {
+            // Clear current account session
+            _currentAccount.value = null
+            // Reset UI state
+            _uiState.value = EmailUiState()
+        }
+    }
+    
     fun clearError() {
         _uiState.update { it.copy(error = null) }
     }

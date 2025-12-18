@@ -18,10 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.yhm.mail_client.ui.navigation.Screen
-import com.yhm.mail_client.ui.screens.AccountSetupScreen
-import com.yhm.mail_client.ui.screens.ComposeEmailScreen
-import com.yhm.mail_client.ui.screens.MailDetailScreen
-import com.yhm.mail_client.ui.screens.MailListScreen
+import com.yhm.mail_client.ui.screens.*
 import com.yhm.mail_client.ui.theme.MailClientTheme
 import com.yhm.mail_client.ui.viewmodel.EmailViewModel
 
@@ -51,21 +48,51 @@ fun MailClientApp() {
     NavHost(
         navController = navController,
         startDestination = if (currentAccount == null) 
-            Screen.AccountSetup.route 
+            Screen.Login.route 
         else 
             Screen.MailList.route
     ) {
+        // Login Screen
+        composable(Screen.Login.route) {
+            LoginScreen(
+                viewModel = viewModel,
+                onLoginSuccess = {
+                    navController.navigate(Screen.MailList.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToRegister = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+
+        // Register Screen
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                viewModel = viewModel,
+                onRegisterSuccess = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Register.route) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Account Setup (for adding new accounts)
         composable(Screen.AccountSetup.route) {
             AccountSetupScreen(
                 viewModel = viewModel,
                 onAccountSaved = {
-                    navController.navigate(Screen.MailList.route) {
-                        popUpTo(Screen.AccountSetup.route) { inclusive = true }
-                    }
+                    navController.popBackStack()
                 }
             )
         }
         
+        // Mail List Screen
         composable(Screen.MailList.route) {
             MailListScreen(
                 viewModel = viewModel,
@@ -73,14 +100,31 @@ fun MailClientApp() {
                     navController.navigate(Screen.MailDetail.createRoute(emailUid))
                 },
                 onSettingsClick = {
-                    navController.navigate(Screen.AccountSetup.route)
+                    navController.navigate(Screen.Settings.route)
                 },
                 onComposeClick = {
                     navController.navigate(Screen.ComposeEmail.route)
                 }
             )
         }
+
+        // Settings Screen
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                viewModel = viewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onLogout = {
+                    viewModel.logout()
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
         
+        // Compose Email Screen
         composable(Screen.ComposeEmail.route) {
             ComposeEmailScreen(
                 viewModel = viewModel,
@@ -90,6 +134,7 @@ fun MailClientApp() {
             )
         }
         
+        // Mail Detail Screen
         composable(
             route = Screen.MailDetail.route,
             arguments = listOf(
