@@ -1,0 +1,677 @@
+2025-12-19 03:25:09.997 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 03:25:09.999 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 03:25:09.999 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 03:25:10.000 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25
+2025-12-19 03:25:10.005 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 03:25:10.020 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 03:25:10.022 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 03:25:10.029 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 03:25:10.042 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 03:25:10.080 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 03:25:10.109 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 03:25:10.419 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@5e5d171f
+2025-12-19 03:25:10.422 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 03:25:10.447 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 03:25:10.456 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 03:25:10.461 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 03:25:10.465 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 03:25:10.467 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 03:25:10.473 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 03:25:10.477 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 03:25:10.490 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 03:25:10.494 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 03:25:10.526 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 03:25:10.542 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 03:25:10.552 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 03:25:10.559 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 03:25:10.565 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 03:25:10.573 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 03:25:10.579 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 03:25:10.584 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 03:25:10.600 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 03:25:10.615 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 03:25:10.622 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 03:25:10.630 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 03:25:10.636 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 03:25:10.636 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 03:25:10.640 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 03:25:10.640 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 03:32:50.579 [virtual-43] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 03:32:50.582 [virtual-43] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 03:32:50.582 [virtual-43] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 03:32:50.586 [virtual-43] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 03:32:50.586 [virtual-43] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 03:32:50.586 [virtual-43] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 03:43:35.314 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 03:43:35.316 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 03:43:35.316 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 03:43:35.317 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25
+2025-12-19 03:43:35.319 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 03:43:35.335 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 03:43:35.335 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 03:43:35.342 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 03:43:35.348 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 03:43:35.358 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 03:43:35.386 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 03:43:35.657 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@7770f470
+2025-12-19 03:43:35.660 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 03:43:35.672 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 03:43:35.676 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 03:43:35.680 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 03:43:35.681 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 03:43:35.686 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 03:43:35.691 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 03:43:35.692 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 03:43:35.714 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 03:43:35.719 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 03:43:35.740 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 03:43:35.749 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 03:43:35.758 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 03:43:35.764 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 03:43:35.820 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 03:43:35.827 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 03:43:35.832 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 03:43:35.838 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 03:43:35.844 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 03:43:35.850 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 03:43:35.858 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 03:43:35.866 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 03:43:35.873 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 03:43:35.873 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 03:43:35.875 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 03:43:35.876 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 04:42:06.432 [virtual-44] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 04:42:06.444 [virtual-44] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 04:42:06.445 [virtual-44] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 04:42:06.457 [virtual-44] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 04:42:06.457 [virtual-44] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 04:42:06.457 [virtual-44] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 04:52:25.386 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 04:52:25.388 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 04:52:25.388 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 04:52:25.388 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25
+2025-12-19 04:52:25.389 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 04:52:25.413 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 04:52:25.413 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 04:52:25.419 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 04:52:25.426 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 04:52:25.438 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 04:52:25.458 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 04:52:25.828 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@5f9b2141
+2025-12-19 04:52:25.833 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 04:52:25.854 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 04:52:25.858 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 04:52:25.861 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 04:52:25.865 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 04:52:25.869 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 04:52:25.873 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 04:52:25.876 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 04:52:25.881 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 04:52:25.883 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 04:52:25.929 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 04:52:25.952 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 04:52:25.961 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 04:52:25.966 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 04:52:25.974 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 04:52:25.981 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 04:52:25.988 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 04:52:25.995 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 04:52:26.002 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 04:52:26.007 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 04:52:26.014 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 04:52:26.019 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 04:52:26.024 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 04:52:26.025 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 04:52:26.029 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 04:52:26.029 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 04:55:37.629 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:51410 (虚拟线程: true, 线程名: smtp-handler-0)
+2025-12-19 04:55:37.633 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 04:55:37.699 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 04:55:37.705 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 04:55:37.785 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 04:55:37.790 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 04:55:37.820 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 04:55:37.822 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 04:55:37.824 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:51410
+2025-12-19 04:55:38.861 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:51411 (虚拟线程: true, 线程名: smtp-handler-1)
+2025-12-19 04:55:38.862 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 04:55:38.868 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 04:55:38.870 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 04:55:38.877 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 04:55:38.878 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 04:55:38.889 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 04:55:38.890 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 04:55:38.891 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:51411
+2025-12-19 04:55:40.917 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:51412 (虚拟线程: true, 线程名: smtp-handler-2)
+2025-12-19 04:55:40.917 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 04:55:40.933 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 04:55:40.935 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 04:55:40.963 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 04:55:40.965 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 04:55:40.980 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 04:55:40.980 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 04:55:40.981 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:51412
+2025-12-19 05:02:10.627 [smtp-handler-3] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:64180 (虚拟线程: true, 线程名: smtp-handler-3)
+2025-12-19 05:02:10.628 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:02:10.690 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:02:10.691 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:02:10.756 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 05:02:10.757 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:02:10.813 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:02:10.814 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:02:10.814 [smtp-handler-3] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:64180
+2025-12-19 05:02:11.855 [smtp-handler-4] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:62689 (虚拟线程: true, 线程名: smtp-handler-4)
+2025-12-19 05:02:11.855 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:02:11.865 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:02:11.866 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:02:11.879 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 05:02:11.880 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:02:11.888 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:02:11.888 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:02:11.889 [smtp-handler-4] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:62689
+2025-12-19 05:02:13.905 [smtp-handler-5] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:62694 (虚拟线程: true, 线程名: smtp-handler-5)
+2025-12-19 05:02:13.906 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:02:13.916 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:02:13.918 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:02:13.922 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 05:02:13.923 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:02:13.932 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:02:13.933 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:02:13.934 [smtp-handler-5] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:62694
+2025-12-19 05:03:03.377 [virtual-41] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 05:03:03.379 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 05:03:03.379 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 05:03:03.382 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 05:03:03.383 [virtual-41] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 05:03:03.383 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 05:03:08.423 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:03:08.425 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 05:03:08.425 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:03:08.425 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25
+2025-12-19 05:03:08.427 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 05:03:08.438 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 05:03:08.438 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 05:03:08.444 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 05:03:08.448 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 05:03:08.461 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 05:03:08.480 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 05:03:08.776 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@5f9b2141
+2025-12-19 05:03:08.778 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 05:03:08.788 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 05:03:08.792 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 05:03:08.795 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 05:03:08.796 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 05:03:08.799 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 05:03:08.803 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 05:03:08.805 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 05:03:08.808 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 05:03:08.810 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 05:03:08.829 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 05:03:08.836 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 05:03:08.842 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 05:03:08.847 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 05:03:08.853 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 05:03:08.858 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 05:03:08.864 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 05:03:08.870 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 05:03:08.875 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 05:03:08.881 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 05:03:08.887 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 05:03:08.893 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 05:03:08.900 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 05:03:08.901 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 05:03:08.903 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 05:03:08.903 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 05:03:14.659 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:62564 (虚拟线程: true, 线程名: smtp-handler-0)
+2025-12-19 05:03:14.663 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:03:14.717 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:03:14.725 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:03:14.767 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 05:03:14.771 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:03:14.802 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:03:14.804 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:03:14.805 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:62564
+2025-12-19 05:03:15.824 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:62566 (虚拟线程: true, 线程名: smtp-handler-1)
+2025-12-19 05:03:15.825 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:03:15.833 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:03:15.835 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:03:15.839 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 05:03:15.841 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:03:15.853 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:03:15.853 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:03:15.854 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:62566
+2025-12-19 05:03:17.875 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:62574 (虚拟线程: true, 线程名: smtp-handler-2)
+2025-12-19 05:03:17.876 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:03:17.884 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:03:17.886 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:03:17.891 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM:<test@localhost>
+2025-12-19 05:03:17.891 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:03:17.903 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:03:17.904 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:03:17.904 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:62574
+2025-12-19 05:07:57.077 [smtp-handler-3] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:49942 (虚拟线程: true, 线程名: smtp-handler-3)
+2025-12-19 05:07:57.078 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:07:57.175 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:07:57.175 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:07:57.335 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:07:57.336 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:07:57.410 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:07:57.412 [smtp-handler-3] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:07:57.412 [smtp-handler-3] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:49942
+2025-12-19 05:07:58.533 [smtp-handler-4] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:49948 (虚拟线程: true, 线程名: smtp-handler-4)
+2025-12-19 05:07:58.534 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:07:58.548 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:07:58.549 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:07:58.565 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:07:58.566 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:07:58.601 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:07:58.601 [smtp-handler-4] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:07:58.603 [smtp-handler-4] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:49948
+2025-12-19 05:08:00.618 [smtp-handler-5] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:49951 (虚拟线程: true, 线程名: smtp-handler-5)
+2025-12-19 05:08:00.618 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:08:00.625 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:08:00.627 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:08:00.635 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:08:00.636 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:08:00.649 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:08:00.650 [smtp-handler-5] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:08:00.651 [smtp-handler-5] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:49951
+2025-12-19 05:08:32.362 [smtp-handler-6] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:55405 (虚拟线程: true, 线程名: smtp-handler-6)
+2025-12-19 05:08:32.363 [smtp-handler-6] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:08:32.466 [smtp-handler-6] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:08:32.467 [smtp-handler-6] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:08:32.546 [smtp-handler-6] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:08:32.547 [smtp-handler-6] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:08:32.598 [smtp-handler-6] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:08:32.599 [smtp-handler-6] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:08:32.600 [smtp-handler-6] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:55405
+2025-12-19 05:08:33.649 [smtp-handler-7] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:55408 (虚拟线程: true, 线程名: smtp-handler-7)
+2025-12-19 05:08:33.650 [smtp-handler-7] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:08:33.667 [smtp-handler-7] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:08:33.669 [smtp-handler-7] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:08:33.696 [smtp-handler-7] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:08:33.697 [smtp-handler-7] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:08:33.718 [smtp-handler-7] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:08:33.718 [smtp-handler-7] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:08:33.719 [smtp-handler-7] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:55408
+2025-12-19 05:08:35.751 [smtp-handler-8] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:50893 (虚拟线程: true, 线程名: smtp-handler-8)
+2025-12-19 05:08:35.752 [smtp-handler-8] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:08:35.766 [smtp-handler-8] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:08:35.768 [smtp-handler-8] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:08:35.784 [smtp-handler-8] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:08:35.786 [smtp-handler-8] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:08:35.814 [smtp-handler-8] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:08:35.815 [smtp-handler-8] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:08:35.816 [smtp-handler-8] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:50893
+2025-12-19 05:09:47.493 [virtual-41] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 05:09:47.496 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 05:09:47.497 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 05:09:47.502 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 05:09:47.502 [virtual-41] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 05:09:47.502 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 05:10:10.462 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:10:10.464 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 05:10:10.464 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:10:10.465 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25
+2025-12-19 05:10:10.466 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 05:10:10.479 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 05:10:10.479 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 05:10:10.484 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 05:10:10.489 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 05:10:10.501 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 05:10:10.517 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 05:10:10.818 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@5f9b2141
+2025-12-19 05:10:10.821 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 05:10:10.831 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 05:10:10.834 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 05:10:10.837 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 05:10:10.839 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 05:10:10.841 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 05:10:10.844 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 05:10:10.846 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 05:10:10.849 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 05:10:10.851 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 05:10:10.869 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 05:10:10.878 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 05:10:10.882 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 05:10:10.886 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 05:10:10.892 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 05:10:10.896 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 05:10:10.902 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 05:10:10.907 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 05:10:10.911 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 05:10:10.916 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 05:10:10.921 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 05:10:10.925 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 05:10:10.929 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 05:10:10.929 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 05:10:10.932 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 05:10:10.932 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 05:10:15.534 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:63914 (虚拟线程: true, 线程名: smtp-handler-0)
+2025-12-19 05:10:15.540 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:10:15.586 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:10:15.591 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:10:15.633 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:10:15.638 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:10:15.662 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:10:15.663 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:10:15.665 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:63914
+2025-12-19 05:10:16.703 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:63915 (虚拟线程: true, 线程名: smtp-handler-1)
+2025-12-19 05:10:16.703 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:10:16.731 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:10:16.734 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:10:16.751 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:10:16.753 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:10:16.770 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:10:16.770 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:10:16.772 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:63915
+2025-12-19 05:10:18.817 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:63921 (虚拟线程: true, 线程名: smtp-handler-2)
+2025-12-19 05:10:18.817 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:10:18.825 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:10:18.827 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:10:18.836 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:10:18.837 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 501 Syntax error in parameters or arguments
+2025-12-19 05:10:18.851 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:10:18.851 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:10:18.853 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:63921
+2025-12-19 05:11:11.961 [virtual-41] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 05:11:11.963 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 05:11:11.964 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 05:11:11.968 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 05:11:11.968 [virtual-41] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 05:11:11.968 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 05:11:14.764 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:11:14.766 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 05:11:14.766 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:11:14.766 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25
+2025-12-19 05:11:14.767 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 05:11:14.778 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 05:11:14.778 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 05:11:14.782 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 05:11:14.788 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 05:11:14.802 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 05:11:14.819 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 05:11:15.142 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@5f9b2141
+2025-12-19 05:11:15.144 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 05:11:15.154 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 05:11:15.157 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 05:11:15.160 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 05:11:15.163 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 05:11:15.164 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 05:11:15.167 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 05:11:15.168 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 05:11:15.172 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 05:11:15.173 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 05:11:15.198 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 05:11:15.216 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 05:11:15.221 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 05:11:15.227 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 05:11:15.234 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 05:11:15.239 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 05:11:15.243 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 05:11:15.248 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 05:11:15.254 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 05:11:15.279 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 05:11:15.284 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 05:11:15.291 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 05:11:15.297 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 05:11:15.297 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 05:11:15.300 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 05:11:15.300 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 05:11:21.284 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:65532 (虚拟线程: true, 线程名: smtp-handler-0)
+2025-12-19 05:11:21.288 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:11:21.336 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:11:21.342 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:11:21.392 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:11:21.398 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Sender <test@localhost> OK
+2025-12-19 05:11:21.427 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: RCPT TO: <admin@localhost>
+2025-12-19 05:11:21.465 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Recipient <admin@localhost> OK
+2025-12-19 05:11:21.477 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: DATA
+2025-12-19 05:11:21.478 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 354 Start mail input; end with <CRLF>.<CRLF>
+2025-12-19 05:11:21.526 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: From: <test@localhost>
+2025-12-19 05:11:21.529 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: To: <admin@localhost>
+2025-12-19 05:11:21.530 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Subject: 1111
+2025-12-19 05:11:21.532 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Date: Thu, 18 Dec 2025 21:11:18 +0000
+2025-12-19 05:11:21.532 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MIME-Version: 1.0
+2025-12-19 05:11:21.532 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Type: text/plain; charset=utf-8
+2025-12-19 05:11:21.532 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Transfer-Encoding: 8bit
+2025-12-19 05:11:21.533 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 
+2025-12-19 05:11:21.533 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 500 Syntax error, command unrecognized
+2025-12-19 05:11:21.534 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 11111
+2025-12-19 05:11:21.534 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: .
+2025-12-19 05:11:21.584 [smtp-handler-0] DEBUG com.yhm.smtp.db.EmailRepository - 邮件已保存: id=a41e7719-e6bf-47a9-9b63-c5485587cccc, from=test@localhost, to=[admin@localhost]
+2025-12-19 05:11:21.588 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Message accepted for delivery
+2025-12-19 05:11:21.589 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:11:21.590 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:11:21.591 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:65532
+2025-12-19 05:11:22.622 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:65534 (虚拟线程: true, 线程名: smtp-handler-1)
+2025-12-19 05:11:22.622 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:11:22.648 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:11:22.649 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:11:22.666 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:11:22.668 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Sender <test@localhost> OK
+2025-12-19 05:11:22.684 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: RCPT TO: <admin@localhost>
+2025-12-19 05:11:22.695 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Recipient <admin@localhost> OK
+2025-12-19 05:11:22.718 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: DATA
+2025-12-19 05:11:22.719 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 354 Start mail input; end with <CRLF>.<CRLF>
+2025-12-19 05:11:22.725 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: From: <test@localhost>
+2025-12-19 05:11:22.729 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: To: <admin@localhost>
+2025-12-19 05:11:22.730 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Subject: 1111
+2025-12-19 05:11:22.730 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Date: Thu, 18 Dec 2025 21:11:19 +0000
+2025-12-19 05:11:22.731 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MIME-Version: 1.0
+2025-12-19 05:11:22.731 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Type: text/plain; charset=utf-8
+2025-12-19 05:11:22.732 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Transfer-Encoding: 8bit
+2025-12-19 05:11:22.732 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 
+2025-12-19 05:11:22.732 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 500 Syntax error, command unrecognized
+2025-12-19 05:11:22.732 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 11111
+2025-12-19 05:11:22.732 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: .
+2025-12-19 05:11:22.754 [smtp-handler-1] DEBUG com.yhm.smtp.db.EmailRepository - 邮件已保存: id=a37f95af-6bc4-4f2a-9325-9f316c4f40a9, from=test@localhost, to=[admin@localhost]
+2025-12-19 05:11:22.756 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Message accepted for delivery
+2025-12-19 05:11:22.758 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:11:22.758 [smtp-handler-1] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:11:22.759 [smtp-handler-1] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:65534
+2025-12-19 05:11:24.819 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:49153 (虚拟线程: true, 线程名: smtp-handler-2)
+2025-12-19 05:11:24.820 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:11:24.850 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:11:24.850 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:11:24.866 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:11:24.866 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Sender <test@localhost> OK
+2025-12-19 05:11:24.880 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: RCPT TO: <admin@localhost>
+2025-12-19 05:11:24.890 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Recipient <admin@localhost> OK
+2025-12-19 05:11:24.916 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: DATA
+2025-12-19 05:11:24.918 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 354 Start mail input; end with <CRLF>.<CRLF>
+2025-12-19 05:11:24.920 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: From: <test@localhost>
+2025-12-19 05:11:24.923 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: To: <admin@localhost>
+2025-12-19 05:11:24.923 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Subject: 1111
+2025-12-19 05:11:24.924 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Date: Thu, 18 Dec 2025 21:11:22 +0000
+2025-12-19 05:11:24.924 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MIME-Version: 1.0
+2025-12-19 05:11:24.924 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Type: text/plain; charset=utf-8
+2025-12-19 05:11:24.924 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Transfer-Encoding: 8bit
+2025-12-19 05:11:24.924 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 
+2025-12-19 05:11:24.925 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 500 Syntax error, command unrecognized
+2025-12-19 05:11:24.925 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 11111
+2025-12-19 05:11:24.925 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: .
+2025-12-19 05:11:24.933 [smtp-handler-2] DEBUG com.yhm.smtp.db.EmailRepository - 邮件已保存: id=655d9097-6701-468d-a1f5-6fd4966d9c9a, from=test@localhost, to=[admin@localhost]
+2025-12-19 05:11:24.935 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Message accepted for delivery
+2025-12-19 05:11:24.948 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:11:24.948 [smtp-handler-2] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:11:24.950 [smtp-handler-2] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:49153
+2025-12-19 05:15:31.106 [virtual-41] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 05:15:31.108 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 05:15:31.109 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 05:15:31.112 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 05:15:31.112 [virtual-41] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 05:15:31.112 [virtual-41] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 05:15:33.961 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:15:33.962 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 05:15:33.963 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:15:33.963 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25
+2025-12-19 05:15:33.963 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 05:15:33.973 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 05:15:33.973 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 05:15:33.979 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 05:15:33.984 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 05:15:33.996 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 05:15:34.015 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 05:15:34.314 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@5f9b2141
+2025-12-19 05:15:34.316 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 05:15:34.326 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 05:15:34.329 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 05:15:34.332 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 05:15:34.334 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 05:15:34.336 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 05:15:34.339 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 05:15:34.341 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 05:15:34.345 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 05:15:34.346 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 05:15:34.366 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 05:15:34.383 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 05:15:34.388 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 05:15:34.394 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 05:15:34.399 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 05:15:34.404 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 05:15:34.409 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 05:15:34.414 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 05:15:34.420 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 05:15:34.424 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 05:15:34.429 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 05:15:34.434 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 05:15:34.441 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 05:15:34.449 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 05:15:34.451 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 05:15:34.452 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 05:15:40.320 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 新连接: /127.0.0.1:59220 (虚拟线程: true, 线程名: smtp-handler-0)
+2025-12-19 05:15:40.324 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 220 localhost ESMTP Service Ready
+2025-12-19 05:15:40.369 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: EHLO localhost
+2025-12-19 05:15:40.375 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250-localhost Hello
+250-SIZE 26214400
+250-8BITMIME
+250-PIPELINING
+250-ENHANCEDSTATUSCODES
+250 HELP
+2025-12-19 05:15:40.423 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MAIL FROM: <test@localhost>
+2025-12-19 05:15:40.427 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Sender <test@localhost> OK
+2025-12-19 05:15:40.445 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: RCPT TO: <admin@localhost>
+2025-12-19 05:15:40.481 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Recipient <admin@localhost> OK
+2025-12-19 05:15:40.522 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: DATA
+2025-12-19 05:15:40.523 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 354 Start mail input; end with <CRLF>.<CRLF>
+2025-12-19 05:15:40.529 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: From: <test@localhost>
+2025-12-19 05:15:40.532 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: To: <admin@localhost>
+2025-12-19 05:15:40.532 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Subject: 1111
+2025-12-19 05:15:40.532 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Date: Thu, 18 Dec 2025 21:15:37 +0000
+2025-12-19 05:15:40.534 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: MIME-Version: 1.0
+2025-12-19 05:15:40.534 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Type: text/plain; charset=utf-8
+2025-12-19 05:15:40.534 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: Content-Transfer-Encoding: 8bit
+2025-12-19 05:15:40.534 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 
+2025-12-19 05:15:40.536 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: 11111
+2025-12-19 05:15:40.536 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: .
+2025-12-19 05:15:40.586 [smtp-handler-0] DEBUG com.yhm.smtp.db.EmailRepository - 邮件已保存: id=fc380dde-a6e5-46b4-a7e8-16c13ee13e08, from=test@localhost, to=[admin@localhost]
+2025-12-19 05:15:40.589 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 250 Message accepted for delivery
+2025-12-19 05:15:40.601 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 收到: QUIT
+2025-12-19 05:15:40.602 [smtp-handler-0] DEBUG c.y.s.server.SmtpConnectionHandler - 发送: 221 localhost Service closing transmission channel
+2025-12-19 05:15:40.604 [smtp-handler-0] INFO  c.y.s.server.SmtpConnectionHandler - 连接关闭: /127.0.0.1:59220

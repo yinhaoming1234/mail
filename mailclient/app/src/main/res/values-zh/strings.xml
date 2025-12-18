@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 应用名称 -->
+    <string name="app_name">邮件客户端</string>
+    
+    <!-- MailListScreen -->
+    <string name="mail_title">邮件</string>
+    <string name="sync_emails">同步邮件</string>
+    <string name="settings">设置</string>
+    <string name="add_account">添加账号</string>
+    <string name="no_email_account">没有邮箱账号</string>
+    <string name="add_account_to_start">添加账号以开始使用</string>
+    <string name="no_emails">没有邮件</string>
+    <string name="pull_to_refresh">下拉刷新或点击同步按钮</string>
+    <string name="ok">确定</string>
+    <string name="error_prefix">错误: %s</string>
+    
+    <!-- MailDetailScreen -->
+    <string name="email_details">邮件详情</string>
+    <string name="back">返回</string>
+    <string name="delete">删除</string>
+    <string name="from_label">发件人: </string>
+    <string name="to_label">收件人: </string>
+    <string name="date_label">日期: </string>
+    
+    <!-- AccountSetupScreen -->
+    <string name="setup_email_account">设置邮箱账号</string>
+    <string name="account_information">账号信息</string>
+    <string name="account_name">账号名称</string>
+    <string name="email_address">邮箱地址</string>
+    <string name="pop3_server_settings">POP3 服务器设置</string>
+    <string name="pop3_host">POP3 主机</string>
+    <string name="pop3_host_placeholder">pop.example.com</string>
+    <string name="port">端口</string>
+    <string name="use_ssl_tls">使用 SSL/TLS（推荐）</string>
+    <string name="credentials">认证信息</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="hide_password">隐藏密码</string>
+    <string name="show_password">显示密码</string>
+    <string name="test_connection">测试连接</string>
+    <string name="save_account">保存账号</string>
+    <string name="use_local_server">使用本地服务器</string>
+    
+    <!-- SMTP配置 -->
+    <string name="smtp_server_settings">SMTP 服务器设置</string>
+    <string name="smtp_host">SMTP 主机</string>
+    <string name="smtp_host_placeholder">smtp.example.com</string>
+    
+    <!-- 撰写邮件 -->
+    <string name="compose_email">撰写邮件</string>
+    <string name="recipients">收件人</string>
+    <string name="recipients_hint">多个收件人用逗号分隔</string>
+    <string name="subject">主题</string>
+    <string name="message_body">正文</string>
+    <string name="send">发送</string>
+    <string name="sending">发送中...</string>
+    <string name="send_success">邮件发送成功</string>
+    <string name="send_failed">发送失败</string>
+</resources>

@@ -1,0 +1,218 @@
+2025-12-19 03:25:20.869 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 03:25:20.870 [main] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 03:25:20.871 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 03:25:20.871 [main] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25
+2025-12-19 03:25:20.873 [main] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 03:25:20.873 [main] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 03:25:20.884 [main] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 03:25:20.884 [main] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 03:25:20.891 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 03:25:20.895 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 03:25:20.908 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 03:25:20.925 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 03:25:21.280 [main] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@1b6e1eff
+2025-12-19 03:25:21.283 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 03:25:21.295 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 03:25:21.315 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 03:25:21.318 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 03:25:21.321 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 03:25:21.330 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 03:25:21.335 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 03:25:21.337 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 03:25:21.358 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 03:25:21.362 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 03:25:21.362 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 03:25:21.364 [main] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
+2025-12-19 03:25:21.364 [main] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
+2025-12-19 03:32:52.566 [virtual-41] INFO  com.yhm.pop3.Pop3ServerMain - 收到关闭信号，正在停止 POP3 服务器...
+2025-12-19 03:32:52.568 [virtual-41] INFO  com.yhm.pop3.server.Pop3Server - 正在停止 POP3 服务器...
+2025-12-19 03:32:52.570 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown initiated...
+2025-12-19 03:32:52.575 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown completed.
+2025-12-19 03:32:52.575 [virtual-41] INFO  com.yhm.pop3.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 03:32:52.576 [virtual-41] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已停止
+2025-12-19 03:43:50.014 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 03:43:50.017 [main] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 03:43:50.017 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 03:43:50.017 [main] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25
+2025-12-19 03:43:50.019 [main] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 03:43:50.019 [main] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 03:43:50.029 [main] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 03:43:50.029 [main] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 03:43:50.045 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 03:43:50.050 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 03:43:50.064 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 03:43:50.086 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 03:43:50.421 [main] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@1b6e1eff
+2025-12-19 03:43:50.423 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 03:43:50.435 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 03:43:50.438 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 03:43:50.441 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 03:43:50.443 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 03:43:50.449 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 03:43:50.454 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 03:43:50.455 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 03:43:50.480 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 03:43:50.482 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 03:43:50.482 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 03:43:50.483 [main] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
+2025-12-19 03:43:50.485 [main] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
+2025-12-19 04:09:23.179 [pop3-handler-0] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:60829 (虚拟线程: true, 线程名: pop3-handler-0)
+2025-12-19 04:09:23.185 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <49520.1766088563175@localhost>
+2025-12-19 04:09:23.211 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 04:09:23.254 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 04:09:23.255 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 04:09:23.262 [pop3-handler-0] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 04:09:23.268 [pop3-handler-0] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 0 封邮件
+2025-12-19 04:09:23.277 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 0 messages (0 octets)
+2025-12-19 04:09:23.277 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: 
+2025-12-19 04:09:23.277 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR unknown command
+2025-12-19 04:09:23.284 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: STAT
+2025-12-19 04:09:23.285 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 0 0
+2025-12-19 04:09:23.330 [pop3-handler-0] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 04:09:23.331 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 异常断开，已解锁邮箱: test@localhost
+2025-12-19 04:09:23.333 [pop3-handler-0] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:60829
+2025-12-19 04:27:43.697 [pop3-handler-1] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:63446 (虚拟线程: true, 线程名: pop3-handler-1)
+2025-12-19 04:27:43.699 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <49520.1766089663697@localhost>
+2025-12-19 04:27:43.704 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到:  �  �����M}���:�u��=�^�ˢ՗���L��� ex�&��cz{�9�)+c����x؈5 "�+�,̩�/�0̨�	�
+2025-12-19 04:27:43.706 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:43.706 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: �� � � / 5  u   �   
+2025-12-19 04:27:43.708 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:43.708 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到:                
+2025-12-19 04:27:43.712 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:43.714 [pop3-handler-1] ERROR c.y.p.server.Pop3ConnectionHandler - POP3 连接错误: /127.0.0.1:63446 - 你的主机中的软件中止了一个已建立的连接。
+2025-12-19 04:27:43.714 [pop3-handler-1] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:63446
+2025-12-19 04:27:44.756 [pop3-handler-2] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:63447 (虚拟线程: true, 线程名: pop3-handler-2)
+2025-12-19 04:27:44.757 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <49520.1766089664756@localhost>
+2025-12-19 04:27:44.759 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到:  �  ��=���,���
+2025-12-19 04:27:44.761 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:44.761 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: �u㬚�N�C�5`��� �ſ��L;>�Ħ/����gLNo�A���!�+ "�+�,̩�/�0̨�	�
+2025-12-19 04:27:44.762 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:44.763 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: �� � � / 5  u   �   
+2025-12-19 04:27:44.764 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:44.764 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到:                
+2025-12-19 04:27:44.765 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:44.767 [pop3-handler-2] ERROR c.y.p.server.Pop3ConnectionHandler - POP3 连接错误: /127.0.0.1:63447 - 你的主机中的软件中止了一个已建立的连接。
+2025-12-19 04:27:44.767 [pop3-handler-2] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:63447
+2025-12-19 04:27:46.780 [pop3-handler-3] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:63449 (虚拟线程: true, 线程名: pop3-handler-3)
+2025-12-19 04:27:46.780 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <49520.1766089666780@localhost>
+2025-12-19 04:27:46.784 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到:  �  ��Ѡֺ�x]Rf�K}�IZa�H�Ո}��ZA�M� Z���1
+2025-12-19 04:27:46.784 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:46.786 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: �.ۅ,�4_3V�G3�Q���L��� "�+�,̩�/�0̨�	�
+2025-12-19 04:27:46.789 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:46.789 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: �� � � / 5  u   �   
+2025-12-19 04:27:46.791 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:46.791 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到:                
+2025-12-19 04:27:46.792 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR permission denied
+2025-12-19 04:27:46.793 [pop3-handler-3] ERROR c.y.p.server.Pop3ConnectionHandler - POP3 连接错误: /127.0.0.1:63449 - 你的主机中的软件中止了一个已建立的连接。
+2025-12-19 04:27:46.794 [pop3-handler-3] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:63449
+2025-12-19 04:29:01.095 [pop3-handler-4] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:51916 (虚拟线程: true, 线程名: pop3-handler-4)
+2025-12-19 04:29:01.096 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <49520.1766089741095@localhost>
+2025-12-19 04:29:01.139 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 04:29:01.152 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 04:29:01.154 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 04:29:01.158 [pop3-handler-4] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 04:29:01.164 [pop3-handler-4] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 0 封邮件
+2025-12-19 04:29:01.166 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 0 messages (0 octets)
+2025-12-19 04:29:01.172 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: STAT
+2025-12-19 04:29:01.172 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 0 0
+2025-12-19 04:29:01.184 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 04:29:01.194 [pop3-handler-4] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 04:29:01.198 [pop3-handler-4] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 04:29:01.199 [pop3-handler-4] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:51916
+2025-12-19 04:29:09.151 [pop3-handler-5] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:51923 (虚拟线程: true, 线程名: pop3-handler-5)
+2025-12-19 04:29:09.153 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <49520.1766089749151@localhost>
+2025-12-19 04:29:09.264 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 04:29:09.272 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 04:29:09.316 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 04:29:09.318 [pop3-handler-5] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 04:29:09.322 [pop3-handler-5] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 0 封邮件
+2025-12-19 04:29:09.324 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 0 messages (0 octets)
+2025-12-19 04:29:09.346 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: LIST
+2025-12-19 04:29:09.347 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 0 messages (0 octets)
+2025-12-19 04:29:09.348 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 04:29:09.352 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 04:29:09.353 [pop3-handler-5] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 04:29:09.354 [pop3-handler-5] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 04:29:09.356 [pop3-handler-5] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:51923
+2025-12-19 04:42:06.406 [virtual-41] INFO  com.yhm.pop3.Pop3ServerMain - 收到关闭信号，正在停止 POP3 服务器...
+2025-12-19 04:42:06.409 [virtual-41] INFO  com.yhm.pop3.server.Pop3Server - 正在停止 POP3 服务器...
+2025-12-19 04:42:06.410 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown initiated...
+2025-12-19 04:42:06.415 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown completed.
+2025-12-19 04:42:06.416 [virtual-41] INFO  com.yhm.pop3.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 04:42:06.416 [virtual-41] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已停止
+2025-12-19 04:52:22.536 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 04:52:22.538 [main] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 04:52:22.538 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 04:52:22.538 [main] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25
+2025-12-19 04:52:22.540 [main] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 04:52:22.540 [main] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 04:52:22.556 [main] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 04:52:22.556 [main] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 04:52:22.560 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 04:52:22.566 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 04:52:22.582 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 04:52:22.601 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 04:52:23.102 [main] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@1b6e1eff
+2025-12-19 04:52:23.104 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 04:52:23.117 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 04:52:23.119 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 04:52:23.124 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 04:52:23.127 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 04:52:23.137 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 04:52:23.143 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 04:52:23.145 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 04:52:23.167 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 04:52:23.169 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 04:52:23.171 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 04:52:23.173 [main] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
+2025-12-19 04:52:23.173 [main] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
+2025-12-19 04:54:47.296 [pop3-handler-0] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:53472 (虚拟线程: true, 线程名: pop3-handler-0)
+2025-12-19 04:54:47.301 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <4936.1766091287292@localhost>
+2025-12-19 04:54:47.318 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 04:54:47.355 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 04:54:47.363 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 04:54:47.368 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: -ERR [AUTH] authentication failed
+2025-12-19 04:55:10.797 [pop3-handler-1] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:52165 (虚拟线程: true, 线程名: pop3-handler-1)
+2025-12-19 04:55:10.799 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <4936.1766091310797@localhost>
+2025-12-19 04:55:10.808 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 04:55:10.815 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 04:55:10.817 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 04:55:10.820 [pop3-handler-1] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 04:55:10.825 [pop3-handler-1] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 0 封邮件
+2025-12-19 04:55:10.834 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 0 messages (0 octets)
+2025-12-19 04:55:10.853 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: STAT
+2025-12-19 04:55:10.854 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 0 0
+2025-12-19 04:55:10.887 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 04:55:10.891 [pop3-handler-1] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 04:55:10.894 [pop3-handler-0] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:53472
+2025-12-19 04:55:10.895 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 04:55:10.896 [pop3-handler-1] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:52165
+2025-12-19 05:01:48.239 [pop3-handler-2] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:56646 (虚拟线程: true, 线程名: pop3-handler-2)
+2025-12-19 05:01:48.242 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <4936.1766091708239@localhost>
+2025-12-19 05:01:48.384 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 05:01:48.391 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 05:01:48.397 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 05:01:48.400 [pop3-handler-2] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 05:01:48.404 [pop3-handler-2] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 0 封邮件
+2025-12-19 05:01:48.405 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 0 messages (0 octets)
+2025-12-19 05:01:48.434 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: LIST
+2025-12-19 05:01:48.437 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 0 messages (0 octets)
+2025-12-19 05:01:48.438 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 05:01:48.452 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 05:01:48.453 [pop3-handler-2] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 05:01:48.454 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 05:01:48.455 [pop3-handler-2] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:56646
+2025-12-19 05:32:07.853 [pop3-handler-3] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /192.168.1.153:44306 (虚拟线程: true, 线程名: pop3-handler-3)
+2025-12-19 05:32:07.854 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <4936.1766093527853@localhost>
+2025-12-19 05:32:07.874 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 05:32:07.887 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 05:32:07.890 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 05:32:07.893 [pop3-handler-3] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 05:32:07.900 [pop3-handler-3] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 0 封邮件
+2025-12-19 05:32:07.901 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 0 messages (0 octets)
+2025-12-19 05:32:07.906 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: STAT
+2025-12-19 05:32:07.908 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 0 0
+2025-12-19 05:32:07.918 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 05:32:07.918 [pop3-handler-3] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 05:32:07.919 [pop3-handler-3] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 05:32:07.920 [pop3-handler-3] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /192.168.1.153:44306

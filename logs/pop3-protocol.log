@@ -1,0 +1,19 @@
+04:09:23.253 [pop3-handler-0] USER: test@localhost
+04:09:23.268 [pop3-handler-0] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
+04:29:01.151 [pop3-handler-4] USER: test@localhost
+04:29:01.165 [pop3-handler-4] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
+04:29:01.195 [pop3-handler-4] 用户 test@localhost 退出，删除了 0 封邮件
+04:29:09.271 [pop3-handler-5] USER: test@localhost
+04:29:09.323 [pop3-handler-5] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
+04:29:09.353 [pop3-handler-5] 用户 test@localhost 退出，删除了 0 封邮件
+04:54:47.353 [pop3-handler-0] USER: test@localhost
+04:54:47.368 [pop3-handler-0] 认证失败: test@localhost (尝试次数: 1)
+04:55:10.814 [pop3-handler-1] USER: test@localhost
+04:55:10.826 [pop3-handler-1] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
+04:55:10.891 [pop3-handler-1] 用户 test@localhost 退出，删除了 0 封邮件
+05:01:48.391 [pop3-handler-2] USER: test@localhost
+05:01:48.404 [pop3-handler-2] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
+05:01:48.454 [pop3-handler-2] 用户 test@localhost 退出，删除了 0 封邮件
+05:32:07.886 [pop3-handler-3] USER: test@localhost
+05:32:07.900 [pop3-handler-3] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
+05:32:07.918 [pop3-handler-3] 用户 test@localhost 退出，删除了 0 封邮件

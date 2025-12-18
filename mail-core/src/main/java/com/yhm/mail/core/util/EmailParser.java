@@ -14,14 +14,15 @@ import java.util.regex.Pattern;
  * 解析原始邮件内容，提取各个字段
  */
 public final class EmailParser {
-    
+
     private static final Pattern HEADER_PATTERN = Pattern.compile("^([A-Za-z-]+):\\s*(.*)$");
-    private static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile("<([^>]+)>|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})");
-    
+    private static final Pattern EMAIL_ADDRESS_PATTERN = Pattern
+            .compile("<([^>]+)>|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})");
+
     private EmailParser() {
         // 工具类，禁止实例化
     }
-    
+
     /**
      * 解析原始邮件内容
      *
@@ -33,11 +34,11 @@ public final class EmailParser {
     public static Email parse(String rawContent, String sender, List<String> recipients) {
         String subject = "";
         StringBuilder bodyBuilder = new StringBuilder();
-        
+
         String[] lines = rawContent.split("\r\n|\n");
         boolean inBody = false;
         boolean inHeaders = true;
-        
+
         for (String line : lines) {
             if (inHeaders) {
                 if (line.isEmpty()) {
@@ -45,12 +46,12 @@ public final class EmailParser {
                     inBody = true;
                     continue;
                 }
-                
+
                 Matcher matcher = HEADER_PATTERN.matcher(line);
                 if (matcher.matches()) {
                     String headerName = matcher.group(1).toLowerCase();
                     String headerValue = matcher.group(2);
-                    
+
                     if ("subject".equals(headerName)) {
                         subject = decodeHeader(headerValue);
                     }
@@ -62,7 +63,7 @@ public final class EmailParser {
                 bodyBuilder.append(line);
             }
         }
-        
+
         return Email.builder()
                 .id(UUID.randomUUID())
                 .sender(sender)
@@ -76,7 +77,7 @@ public final class EmailParser {
                 .deleted(false)
                 .build();
     }
-    
+
     /**
      * 提取邮箱地址
      * 从 "Name <email@domain.com>" 或 "email@domain.com" 格式中提取邮箱地址
@@ -88,7 +89,7 @@ public final class EmailParser {
         if (input == null || input.isBlank()) {
             return "";
         }
-        
+
         Matcher matcher = EMAIL_ADDRESS_PATTERN.matcher(input);
         if (matcher.find()) {
             String bracketed = matcher.group(1);
@@ -96,7 +97,7 @@ public final class EmailParser {
         }
         return input.trim();
     }
-    
+
     /**
      * 验证邮箱地址格式
      *
@@ -107,9 +108,10 @@ public final class EmailParser {
         if (email == null || email.isBlank()) {
             return false;
         }
-        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+        // 修改正则以支持 localhost 等没有点号的域名（用于开发/测试）
+        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\\.[a-zA-Z]{2,})?$");
     }
-    
+
     /**
      * 提取邮箱的域名部分
      *
@@ -122,7 +124,7 @@ public final class EmailParser {
         }
         return email.substring(email.lastIndexOf('@') + 1).toLowerCase();
     }
-    
+
     /**
      * 提取邮箱的本地部分（用户名）
      *
@@ -135,7 +137,7 @@ public final class EmailParser {
         }
         return email.substring(0, email.lastIndexOf('@')).toLowerCase();
     }
-    
+
     /**
      * 解码邮件头部（简单实现，处理 quoted-printable 和 base64）
      *
@@ -146,7 +148,7 @@ public final class EmailParser {
         if (header == null) {
             return "";
         }
-        
+
         // 简单实现：处理 =?charset?encoding?encoded_text?= 格式
         if (header.startsWith("=?") && header.contains("?=")) {
             try {
@@ -156,7 +158,7 @@ public final class EmailParser {
                     String charset = parts[1];
                     String encoding = parts[2];
                     String encodedText = parts[3];
-                    
+
                     if ("B".equalsIgnoreCase(encoding)) {
                         // Base64 编码
                         return new String(java.util.Base64.getDecoder().decode(encodedText), charset);
@@ -170,10 +172,10 @@ public final class EmailParser {
                 return header;
             }
         }
-        
+
         return header;
     }
-    
+
     /**
      * 解码 Quoted-Printable 编码的文本
      */
@@ -181,7 +183,7 @@ public final class EmailParser {
         StringBuilder result = new StringBuilder();
         byte[] bytes = new byte[text.length()];
         int byteIndex = 0;
-        
+
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '=' && i + 2 < text.length()) {
@@ -198,7 +200,7 @@ public final class EmailParser {
                 bytes[byteIndex++] = (byte) c;
             }
         }
-        
+
         try {
             return new String(bytes, 0, byteIndex, charset);
         } catch (Exception e) {
@@ -206,4 +208,3 @@ public final class EmailParser {
         }
     }
 }
-

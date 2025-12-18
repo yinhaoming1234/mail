@@ -1,0 +1,60 @@
+04:55:37.703 [smtp-handler-0] EHLO from localhost (/127.0.0.1:51410)
+04:55:37.821 [smtp-handler-0] 客户端断开连接: /127.0.0.1:51410
+04:55:38.868 [smtp-handler-1] EHLO from localhost (/127.0.0.1:51411)
+04:55:38.890 [smtp-handler-1] 客户端断开连接: /127.0.0.1:51411
+04:55:40.933 [smtp-handler-2] EHLO from localhost (/127.0.0.1:51412)
+04:55:40.980 [smtp-handler-2] 客户端断开连接: /127.0.0.1:51412
+05:02:10.691 [smtp-handler-3] EHLO from localhost (/127.0.0.1:64180)
+05:02:10.814 [smtp-handler-3] 客户端断开连接: /127.0.0.1:64180
+05:02:11.866 [smtp-handler-4] EHLO from localhost (/127.0.0.1:62689)
+05:02:11.888 [smtp-handler-4] 客户端断开连接: /127.0.0.1:62689
+05:02:13.918 [smtp-handler-5] EHLO from localhost (/127.0.0.1:62694)
+05:02:13.932 [smtp-handler-5] 客户端断开连接: /127.0.0.1:62694
+05:03:14.723 [smtp-handler-0] EHLO from localhost (/127.0.0.1:62564)
+05:03:14.802 [smtp-handler-0] 客户端断开连接: /127.0.0.1:62564
+05:03:15.835 [smtp-handler-1] EHLO from localhost (/127.0.0.1:62566)
+05:03:15.853 [smtp-handler-1] 客户端断开连接: /127.0.0.1:62566
+05:03:17.885 [smtp-handler-2] EHLO from localhost (/127.0.0.1:62574)
+05:03:17.904 [smtp-handler-2] 客户端断开连接: /127.0.0.1:62574
+05:07:57.175 [smtp-handler-3] EHLO from localhost (/127.0.0.1:49942)
+05:07:57.411 [smtp-handler-3] 客户端断开连接: /127.0.0.1:49942
+05:07:58.549 [smtp-handler-4] EHLO from localhost (/127.0.0.1:49948)
+05:07:58.601 [smtp-handler-4] 客户端断开连接: /127.0.0.1:49948
+05:08:00.627 [smtp-handler-5] EHLO from localhost (/127.0.0.1:49951)
+05:08:00.650 [smtp-handler-5] 客户端断开连接: /127.0.0.1:49951
+05:08:32.467 [smtp-handler-6] EHLO from localhost (/127.0.0.1:55405)
+05:08:32.599 [smtp-handler-6] 客户端断开连接: /127.0.0.1:55405
+05:08:33.668 [smtp-handler-7] EHLO from localhost (/127.0.0.1:55408)
+05:08:33.718 [smtp-handler-7] 客户端断开连接: /127.0.0.1:55408
+05:08:35.768 [smtp-handler-8] EHLO from localhost (/127.0.0.1:50893)
+05:08:35.815 [smtp-handler-8] 客户端断开连接: /127.0.0.1:50893
+05:10:15.590 [smtp-handler-0] EHLO from localhost (/127.0.0.1:63914)
+05:10:15.662 [smtp-handler-0] 客户端断开连接: /127.0.0.1:63914
+05:10:16.733 [smtp-handler-1] EHLO from localhost (/127.0.0.1:63915)
+05:10:16.770 [smtp-handler-1] 客户端断开连接: /127.0.0.1:63915
+05:10:18.826 [smtp-handler-2] EHLO from localhost (/127.0.0.1:63921)
+05:10:18.851 [smtp-handler-2] 客户端断开连接: /127.0.0.1:63921
+05:11:21.341 [smtp-handler-0] EHLO from localhost (/127.0.0.1:65532)
+05:11:21.397 [smtp-handler-0] MAIL FROM: <test@localhost>
+05:11:21.465 [smtp-handler-0] RCPT TO: <admin@localhost>
+05:11:21.478 [smtp-handler-0] 开始接收邮件数据
+05:11:21.587 [smtp-handler-0] 邮件已保存: from=test@localhost, to=[admin@localhost], subject=1111
+05:11:21.590 [smtp-handler-0] 客户端断开连接: /127.0.0.1:65532
+05:11:22.648 [smtp-handler-1] EHLO from localhost (/127.0.0.1:65534)
+05:11:22.667 [smtp-handler-1] MAIL FROM: <test@localhost>
+05:11:22.694 [smtp-handler-1] RCPT TO: <admin@localhost>
+05:11:22.719 [smtp-handler-1] 开始接收邮件数据
+05:11:22.756 [smtp-handler-1] 邮件已保存: from=test@localhost, to=[admin@localhost], subject=1111
+05:11:22.758 [smtp-handler-1] 客户端断开连接: /127.0.0.1:65534
+05:11:24.850 [smtp-handler-2] EHLO from localhost (/127.0.0.1:49153)
+05:11:24.866 [smtp-handler-2] MAIL FROM: <test@localhost>
+05:11:24.889 [smtp-handler-2] RCPT TO: <admin@localhost>
+05:11:24.916 [smtp-handler-2] 开始接收邮件数据
+05:11:24.935 [smtp-handler-2] 邮件已保存: from=test@localhost, to=[admin@localhost], subject=1111
+05:11:24.948 [smtp-handler-2] 客户端断开连接: /127.0.0.1:49153
+05:15:40.373 [smtp-handler-0] EHLO from localhost (/127.0.0.1:59220)
+05:15:40.426 [smtp-handler-0] MAIL FROM: <test@localhost>
+05:15:40.480 [smtp-handler-0] RCPT TO: <admin@localhost>
+05:15:40.523 [smtp-handler-0] 开始接收邮件数据
+05:15:40.588 [smtp-handler-0] 邮件已保存: from=test@localhost, to=[admin@localhost], subject=1111
+05:15:40.602 [smtp-handler-0] 客户端断开连接: /127.0.0.1:59220
