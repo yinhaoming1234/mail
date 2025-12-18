@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 收件人预览 -->
+<div th:fragment="recipient-preview">
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        <span th:if="${recipientCount > 0}">
+            将发送给 <strong th:text="${recipientCount}"></strong> 位用户
+        </span>
+        <span th:if="${recipientCount == 0}">
+            没有找到符合条件的收件人
+        </span>
+    </div>
+</div>
+
+</html>

@@ -34,6 +34,8 @@ public class SecurityConfig {
                 .requestMatchers("/login", "/error").permitAll()
                 // Actuator 健康检查允许匿名
                 .requestMatchers("/actuator/health").permitAll()
+                // API 接口允许匿名访问（供移动客户端使用）
+                .requestMatchers("/api/**").permitAll()
                 // 其他请求需要认证
                 .anyRequest().authenticated()
             )

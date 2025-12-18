@@ -20,42 +20,32 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(
+fun ChangePasswordScreen(
     viewModel: EmailViewModel,
-    onRegisterSuccess: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateBack: () -> Unit,
+    onPasswordChanged: () -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
-    var selectedDomain by remember { mutableStateOf("localhost") }
-    var password by remember { mutableStateOf("") }
+    val currentAccount by viewModel.currentAccount.collectAsState()
+    
+    var currentPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
+    var currentPasswordVisible by remember { mutableStateOf(false) }
+    var newPasswordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var successMessage by remember { mutableStateOf<String?>(null) }
-    var expanded by remember { mutableStateOf(false) }
+    
     val coroutineScope = rememberCoroutineScope()
-    
     val apiClient = remember { ApiClient() }
-    var availableDomains by remember { mutableStateOf(listOf("localhost", "example.com")) }
-    
-    // 加载可用域名
-    LaunchedEffect(Unit) {
-        apiClient.getAvailableDomains().onSuccess { domains ->
-            if (domains.isNotEmpty()) {
-                availableDomains = domains
-                selectedDomain = domains.first()
-            }
-        }
-    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("注册新账户") },
+                title = { Text("修改密码") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateToLogin) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "返回")
                     }
                 },
@@ -76,7 +66,7 @@ fun RegisterScreen(
         ) {
             // Icon
             Icon(
-                imageVector = Icons.Default.PersonAdd,
+                imageVector = Icons.Default.Lock,
                 contentDescription = null,
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.primary
@@ -85,99 +75,82 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "创建您的邮箱账户",
+                text = "修改您的密码",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Username field
-            OutlinedTextField(
-                value = username,
-                onValueChange = { 
-                    username = it
-                    errorMessage = null
-                },
-                label = { Text("用户名") },
-                placeholder = { Text("输入用户名") },
-                leadingIcon = {
-                    Icon(Icons.Default.Person, contentDescription = null)
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                enabled = !isLoading,
-                supportingText = {
-                    Text("用户名将用于邮箱地址: $username@$selectedDomain")
-                }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Domain selection
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded && !isLoading }
-            ) {
-                OutlinedTextField(
-                    value = selectedDomain,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("邮箱域名") },
-                    leadingIcon = {
-                        Icon(Icons.Default.Domain, contentDescription = null)
-                    },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                    },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
+            currentAccount?.let { account ->
+                Text(
+                    text = account.email,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    availableDomains.forEach { domain ->
-                        DropdownMenuItem(
-                            text = { Text(domain) },
-                            onClick = {
-                                selectedDomain = domain
-                                expanded = false
-                            }
-                        )
-                    }
-                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // Password field
+            // Current password field
             OutlinedTextField(
-                value = password,
+                value = currentPassword,
                 onValueChange = { 
-                    password = it
+                    currentPassword = it
                     errorMessage = null
                 },
-                label = { Text("密码") },
-                placeholder = { Text("输入密码") },
+                label = { Text("当前密码") },
+                placeholder = { Text("输入当前密码") },
                 leadingIcon = {
                     Icon(Icons.Default.Lock, contentDescription = null)
                 },
                 trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    IconButton(onClick = { currentPasswordVisible = !currentPasswordVisible }) {
                         Icon(
-                            imageVector = if (passwordVisible) 
+                            imageVector = if (currentPasswordVisible) 
                                 Icons.Default.Visibility 
                             else 
                                 Icons.Default.VisibilityOff,
-                            contentDescription = if (passwordVisible) "隐藏密码" else "显示密码"
+                            contentDescription = if (currentPasswordVisible) "隐藏密码" else "显示密码"
                         )
                     }
                 },
-                visualTransformation = if (passwordVisible) 
+                visualTransformation = if (currentPasswordVisible) 
+                    VisualTransformation.None 
+                else 
+                    PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                enabled = !isLoading
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // New password field
+            OutlinedTextField(
+                value = newPassword,
+                onValueChange = { 
+                    newPassword = it
+                    errorMessage = null
+                },
+                label = { Text("新密码") },
+                placeholder = { Text("输入新密码") },
+                leadingIcon = {
+                    Icon(Icons.Default.LockReset, contentDescription = null)
+                },
+                trailingIcon = {
+                    IconButton(onClick = { newPasswordVisible = !newPasswordVisible }) {
+                        Icon(
+                            imageVector = if (newPasswordVisible) 
+                                Icons.Default.Visibility 
+                            else 
+                                Icons.Default.VisibilityOff,
+                            contentDescription = if (newPasswordVisible) "隐藏密码" else "显示密码"
+                        )
+                    }
+                },
+                visualTransformation = if (newPasswordVisible) 
                     VisualTransformation.None 
                 else 
                     PasswordVisualTransformation(),
@@ -192,17 +165,17 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Confirm password field
+            // Confirm new password field
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { 
                     confirmPassword = it
                     errorMessage = null
                 },
-                label = { Text("确认密码") },
-                placeholder = { Text("再次输入密码") },
+                label = { Text("确认新密码") },
+                placeholder = { Text("再次输入新密码") },
                 leadingIcon = {
-                    Icon(Icons.Default.Lock, contentDescription = null)
+                    Icon(Icons.Default.LockReset, contentDescription = null)
                 },
                 trailingIcon = {
                     IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
@@ -223,9 +196,9 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = !isLoading,
-                isError = confirmPassword.isNotEmpty() && password != confirmPassword,
+                isError = confirmPassword.isNotEmpty() && newPassword != confirmPassword,
                 supportingText = {
-                    if (confirmPassword.isNotEmpty() && password != confirmPassword) {
+                    if (confirmPassword.isNotEmpty() && newPassword != confirmPassword) {
                         Text("密码不匹配", color = MaterialTheme.colorScheme.error)
                     }
                 }
@@ -240,7 +213,7 @@ fun RegisterScreen(
                     style = MaterialTheme.typography.bodySmall
                 )
             }
-            
+
             // Success message
             successMessage?.let { success ->
                 Spacer(modifier = Modifier.height(8.dp))
@@ -251,47 +224,52 @@ fun RegisterScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // Register button
+            // Submit button
             Button(
                 onClick = {
                     when {
-                        username.isBlank() -> {
-                            errorMessage = "请输入用户名"
+                        currentPassword.isBlank() -> {
+                            errorMessage = "请输入当前密码"
                         }
-                        password.isBlank() -> {
-                            errorMessage = "请输入密码"
+                        newPassword.isBlank() -> {
+                            errorMessage = "请输入新密码"
                         }
-                        password.length < 6 -> {
-                            errorMessage = "密码长度至少6个字符"
+                        newPassword.length < 6 -> {
+                            errorMessage = "新密码长度至少6个字符"
                         }
-                        password != confirmPassword -> {
-                            errorMessage = "两次输入的密码不一致"
+                        newPassword != confirmPassword -> {
+                            errorMessage = "两次输入的新密码不一致"
+                        }
+                        currentPassword == newPassword -> {
+                            errorMessage = "新密码不能与当前密码相同"
                         }
                         else -> {
+                            val email = currentAccount?.email ?: return@Button
+                            
                             isLoading = true
                             errorMessage = null
                             successMessage = null
                             
                             coroutineScope.launch {
-                                val result = apiClient.register(
-                                    username = username,
-                                    domain = selectedDomain,
-                                    password = password
+                                val result = apiClient.changePassword(
+                                    email = email,
+                                    currentPassword = currentPassword,
+                                    newPassword = newPassword
                                 )
                                 
                                 isLoading = false
                                 
                                 result.fold(
                                     onSuccess = {
-                                        successMessage = "注册成功！请登录"
-                                        // 延迟后跳转到登录页
+                                        successMessage = "密码修改成功！"
+                                        // 延迟后返回
                                         kotlinx.coroutines.delay(1500)
-                                        onRegisterSuccess()
+                                        onPasswordChanged()
                                     },
                                     onFailure = { error ->
-                                        errorMessage = error.message ?: "注册失败"
+                                        errorMessage = error.message ?: "密码修改失败"
                                     }
                                 )
                             }
@@ -309,29 +287,19 @@ fun RegisterScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("注册", style = MaterialTheme.typography.titleMedium)
+                    Text("确认修改", style = MaterialTheme.typography.titleMedium)
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Login link
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+            // Cancel button
+            OutlinedButton(
+                onClick = onNavigateBack,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
             ) {
-                Text(
-                    text = "已有账号？",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                TextButton(
-                    onClick = onNavigateToLogin,
-                    enabled = !isLoading
-                ) {
-                    Text("立即登录")
-                }
+                Text("取消")
             }
         }
     }

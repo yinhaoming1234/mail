@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS users (
     quota_bytes BIGINT NOT NULL DEFAULT 1073741824, -- 默认 1GB
     used_bytes BIGINT NOT NULL DEFAULT 0,
     is_enabled BOOLEAN NOT NULL DEFAULT true,
+    is_admin BOOLEAN NOT NULL DEFAULT false, -- 是否为管理员
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login_at TIMESTAMP WITH TIME ZONE,
@@ -178,13 +179,13 @@ ON CONFLICT (domain) DO NOTHING;
 
 -- 插入测试用户（明文密码，仅用于开发测试）
 -- test@localhost / password123
--- admin@localhost / admin123
+-- admin@localhost / admin123 (管理员)
 -- user@example.com / user123
-INSERT INTO users (username, domain, email, password_hash)
+INSERT INTO users (username, domain, email, password_hash, is_admin)
 VALUES 
-    ('test', 'localhost', 'test@localhost', 'password123'),
-    ('admin', 'localhost', 'admin@localhost', 'admin123'),
-    ('user', 'example.com', 'user@example.com', 'user123')
+    ('test', 'localhost', 'test@localhost', 'password123', false),
+    ('admin', 'localhost', 'admin@localhost', 'admin123', true),
+    ('user', 'example.com', 'user@example.com', 'user123', false)
 ON CONFLICT (email) DO NOTHING;
 
 -- ==================== 表注释 ====================

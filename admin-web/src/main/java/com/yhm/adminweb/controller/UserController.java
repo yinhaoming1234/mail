@@ -135,6 +135,7 @@ public class UserController {
         form.setDomain(user.getDomain());
         form.setQuotaBytes(user.getQuotaBytes());
         form.setIsEnabled(user.getIsEnabled());
+        form.setIsAdmin(user.getIsAdmin());
         
         model.addAttribute("userForm", form);
         model.addAttribute("domains", domainService.findEnabled());
@@ -157,6 +158,7 @@ public class UserController {
         form.setDomain(user.getDomain());
         form.setQuotaBytes(user.getQuotaBytes());
         form.setIsEnabled(user.getIsEnabled());
+        form.setIsAdmin(user.getIsAdmin());
         
         model.addAttribute("userForm", form);
         model.addAttribute("domains", domainService.findEnabled());
@@ -267,6 +269,42 @@ public class UserController {
         userService.resetPassword(id, newPassword);
         model.addAttribute("success", "密码重置成功");
         return "common/fragments/success :: success-toast";
+    }
+
+    /**
+     * 切换管理员权限
+     */
+    @PostMapping("/{id}/toggle-admin")
+    @HxRequest
+    @HxTrigger("user-updated")
+    public String toggleAdmin(@PathVariable UUID id, Model model) {
+        var user = userService.toggleAdmin(id);
+        model.addAttribute("user", user);
+        return "users/fragments/table-row :: user-row";
+    }
+
+    /**
+     * 授予管理员权限
+     */
+    @PostMapping("/{id}/grant-admin")
+    @HxRequest
+    @HxTrigger("user-updated")
+    public String grantAdmin(@PathVariable UUID id, Model model) {
+        var user = userService.grantAdmin(id);
+        model.addAttribute("user", user);
+        return "users/fragments/table-row :: user-row";
+    }
+
+    /**
+     * 撤销管理员权限
+     */
+    @PostMapping("/{id}/revoke-admin")
+    @HxRequest
+    @HxTrigger("user-updated")
+    public String revokeAdmin(@PathVariable UUID id, Model model) {
+        var user = userService.revokeAdmin(id);
+        model.addAttribute("user", user);
+        return "users/fragments/table-row :: user-row";
     }
 }
 

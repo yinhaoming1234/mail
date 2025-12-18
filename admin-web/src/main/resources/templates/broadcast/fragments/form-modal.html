@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 群发邮件表单模态框 -->
+<div th:fragment="broadcast-form-modal">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="bi bi-envelope-paper me-2"></i>群发邮件
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <form hx-post="/broadcast/send" hx-target="#modal-container" hx-swap="innerHTML">
+        <div class="modal-body">
+            <!-- 错误提示 -->
+            <div th:if="${error}" class="alert alert-danger">
+                <i class="bi bi-x-circle me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- 目标选择 -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">目标域名</label>
+                    <select class="form-select" name="targetDomain" th:field="${broadcastForm.targetDomain}">
+                        <option value="">所有域名</option>
+                        <option th:each="domain : ${domains}" th:value="${domain.domain}" th:text="${domain.domain}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">发送选项</label>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="adminOnly" id="adminOnlyModal"
+                            th:checked="${broadcastForm.adminOnly}">
+                        <label class="form-check-label" for="adminOnlyModal">
+                            仅发送给管理员
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 邮件主题 -->
+            <div class="mb-3">
+                <label class="form-label">邮件主题 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="subject" th:value="${broadcastForm.subject}"
+                    placeholder="请输入邮件主题" required>
+            </div>
+
+            <!-- 邮件内容 -->
+            <div class="mb-3">
+                <label class="form-label">邮件内容 <span class="text-danger">*</span></label>
+                <textarea class="form-control" name="body" rows="8" th:text="${broadcastForm.body}"
+                    placeholder="请输入邮件内容" required></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send me-1"></i>发送
+            </button>
+        </div>
+    </form>
+</div>
+
+</html>

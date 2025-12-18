@@ -10,6 +10,7 @@ sealed class Screen(val route: String) {
     }
     object ComposeEmail : Screen("compose_email")
     object Settings : Screen("settings")
+    object ChangePassword : Screen("change_password")
     object Profile : Screen("profile")
     object Admin : Screen("admin")
 }

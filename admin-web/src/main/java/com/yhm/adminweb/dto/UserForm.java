@@ -34,6 +34,8 @@ public class UserForm {
     
     private Boolean isEnabled;
     
+    private Boolean isAdmin;
+    
     /**
      * 构建邮箱地址
      */

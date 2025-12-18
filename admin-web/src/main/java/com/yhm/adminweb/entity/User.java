@@ -49,6 +49,10 @@ public class User {
     @Builder.Default
     private Boolean isEnabled = true;
 
+    @Column(name = "is_admin", nullable = false)
+    @Builder.Default
+    private Boolean isAdmin = false;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;

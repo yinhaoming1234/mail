@@ -1,44 +1,230 @@
-2025-12-18 20:51:12.427 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
-2025-12-18 20:51:12.427 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
-2025-12-18 20:51:12.427 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
-2025-12-18 20:51:12.427 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25.0.1
-2025-12-18 20:51:12.428 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
-2025-12-18 20:51:12.431 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
-2025-12-18 20:51:12.431 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
-2025-12-18 20:51:12.433 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
-2025-12-18 20:51:12.435 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
-2025-12-18 20:51:12.441 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
-2025-12-18 20:51:12.448 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
-2025-12-18 20:51:12.586 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@120f102b
-2025-12-18 20:51:12.587 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
-2025-12-18 20:51:12.599 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
-2025-12-18 20:51:12.601 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
-2025-12-18 20:51:12.602 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
-2025-12-18 20:51:12.603 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
-2025-12-18 20:51:12.603 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
-2025-12-18 20:51:12.604 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
-2025-12-18 20:51:12.604 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
-2025-12-18 20:51:12.608 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
-2025-12-18 20:51:12.609 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
-2025-12-18 20:51:12.618 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
-2025-12-18 20:51:12.628 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
-2025-12-18 20:51:12.629 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
-2025-12-18 20:51:12.631 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
-2025-12-18 20:51:12.631 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
-2025-12-18 20:51:12.632 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
-2025-12-18 20:51:12.632 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
-2025-12-18 20:51:12.633 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
-2025-12-18 20:51:12.633 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
-2025-12-18 20:51:12.634 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
-2025-12-18 20:51:12.635 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
-2025-12-18 20:51:12.635 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
-2025-12-18 20:51:12.636 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
-2025-12-18 20:51:12.636 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
-2025-12-18 20:51:12.637 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
-2025-12-18 20:51:12.637 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
-2025-12-18 21:38:22.382 [virtual-26] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
-2025-12-18 21:38:22.563 [virtual-26] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
-2025-12-18 21:38:22.571 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
-2025-12-18 21:38:22.619 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
-2025-12-18 21:38:22.620 [virtual-26] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
-2025-12-18 21:38:22.622 [virtual-26] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 05:38:47.789 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:38:47.791 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 05:38:47.791 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 05:38:47.791 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25.0.1
+2025-12-19 05:38:47.792 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 05:38:47.795 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 05:38:47.795 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 05:38:47.797 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 05:38:47.799 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 05:38:47.804 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 05:38:47.810 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 05:38:48.028 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@693fe6c9
+2025-12-19 05:38:48.029 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 05:38:48.055 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 05:38:48.058 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 05:38:48.059 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 05:38:48.063 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 05:38:48.063 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 05:38:48.064 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 05:38:48.065 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 05:38:48.077 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 05:38:48.077 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 05:38:48.091 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 05:38:48.115 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 05:38:48.118 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 05:38:48.119 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 05:38:48.121 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 05:38:48.123 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 05:38:48.123 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 05:38:48.124 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 05:38:48.125 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 05:38:48.125 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 05:38:48.126 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 05:38:48.127 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 05:38:48.128 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 05:38:48.128 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 05:38:48.129 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 05:38:48.129 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 05:56:10.063 [virtual-27] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 05:56:11.049 [virtual-27] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 05:56:11.219 [virtual-27] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 05:56:11.550 [virtual-27] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 05:56:11.552 [virtual-27] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 05:56:11.567 [virtual-27] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 06:00:13.844 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:00:13.845 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 06:00:13.845 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:00:13.845 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25.0.1
+2025-12-19 06:00:13.846 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 06:00:13.850 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 06:00:13.850 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 06:00:13.852 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 06:00:13.854 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 06:00:13.857 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 06:00:13.863 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 06:00:14.036 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@120f102b
+2025-12-19 06:00:14.037 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 06:00:14.046 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 06:00:14.048 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 06:00:14.049 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 06:00:14.050 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 06:00:14.050 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 06:00:14.051 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 06:00:14.052 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 06:00:14.055 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 06:00:14.057 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 06:00:14.065 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 06:00:14.077 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 06:00:14.078 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 06:00:14.081 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 06:00:14.087 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 06:00:14.089 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 06:00:14.091 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 06:00:14.091 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 06:00:14.092 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 06:00:14.092 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 06:00:14.093 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 06:00:14.094 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 06:00:14.094 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 06:00:14.094 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 06:00:14.096 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 06:00:14.096 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 06:01:26.433 [virtual-26] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 06:01:26.436 [virtual-26] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 06:01:26.440 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 06:01:26.443 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 06:01:26.443 [virtual-26] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 06:01:26.443 [virtual-26] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 06:10:54.285 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:10:54.285 [main] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 06:10:54.285 [main] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:10:54.285 [main] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25.0.1
+2025-12-19 06:10:54.286 [main] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 06:10:54.290 [main] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 06:10:54.290 [main] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 06:10:54.292 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 06:10:54.294 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 06:10:54.300 [main] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 06:10:54.307 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 06:10:54.517 [main] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@120f102b
+2025-12-19 06:10:54.518 [main] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 06:10:54.521 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 06:10:54.522 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 06:10:54.522 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 06:10:54.523 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 06:10:54.524 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 06:10:54.525 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 06:10:54.526 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 06:10:54.529 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 06:10:54.529 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 06:10:54.539 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 06:10:54.555 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 06:10:54.560 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 06:10:54.561 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 06:10:54.562 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 06:10:54.563 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 06:10:54.564 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 06:10:54.565 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 06:10:54.566 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 06:10:54.566 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 06:10:54.567 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 06:10:54.567 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 06:10:54.569 [main] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 06:10:54.569 [main] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 06:10:54.570 [main] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 06:10:54.570 [main] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 06:29:58.927 [virtual-26] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...
+2025-12-19 06:29:59.052 [virtual-26] INFO  com.yhm.smtp.server.SmtpServer - 正在停止 SMTP 服务器...
+2025-12-19 06:29:59.059 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown initiated...
+2025-12-19 06:29:59.075 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Shutdown completed.
+2025-12-19 06:29:59.076 [virtual-26] INFO  com.yhm.smtp.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 06:29:59.076 [virtual-26] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已停止
+2025-12-19 06:58:15.576 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:58:15.577 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 06:58:15.577 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:58:15.577 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25.0.1
+2025-12-19 06:58:15.577 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 06:58:15.580 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 06:58:15.580 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 06:58:15.581 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 06:58:15.582 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 06:58:15.587 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://192.168.1.106:5432/maildb
+2025-12-19 06:58:15.590 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 06:58:15.708 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@cbe6568
+2025-12-19 06:58:15.708 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 06:58:15.722 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 06:58:15.723 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 06:58:15.724 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 06:58:15.726 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 06:58:15.726 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 06:58:15.727 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 06:58:15.727 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 06:58:15.732 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 06:58:15.732 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 06:58:15.737 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 06:58:15.758 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 06:58:15.766 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 06:58:15.767 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 06:58:15.767 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 06:58:15.770 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 06:58:15.772 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 06:58:15.773 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 06:58:15.774 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 06:58:15.774 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 06:58:15.775 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 06:58:15.775 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 06:58:15.777 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 06:58:15.777 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 06:58:15.778 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.server.SmtpServer - SMTP 服务器已启动，监听端口: 2525
+2025-12-19 06:58:15.778 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.server.SmtpServer - 使用虚拟线程处理连接
+2025-12-19 06:59:46.349 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:59:46.350 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain -        SMTP Server - Java 25 Edition     
+2025-12-19 06:59:46.350 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - ==========================================
+2025-12-19 06:59:46.350 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - Java 版本: 25.0.1
+2025-12-19 06:59:46.350 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.SmtpServerMain - 虚拟线程支持: 已启用
+2025-12-19 06:59:46.353 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.server.SmtpServer - 正在启动 SMTP 服务器...
+2025-12-19 06:59:46.353 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.server.SmtpServer - 配置: SmtpServerConfig{domain='localhost', port=2525, maxConnections=1000, connectionTimeout=60000, readTimeout=300000, maxMessageSize=26214400, maxRecipients=100, requireAuth=false}
+2025-12-19 06:59:46.354 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseInitializer - 开始初始化数据库...
+2025-12-19 06:59:46.356 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 06:59:46.359 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://192.168.1.106:5432/maildb
+2025-12-19 06:59:46.361 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Starting...
+2025-12-19 06:59:46.512 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.zaxxer.hikari.pool.HikariPool - SmtpMailPool - Added connection org.postgresql.jdbc.PgConnection@382374fa
+2025-12-19 06:59:46.513 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - SmtpMailPool - Start completed.
+2025-12-19 06:59:46.520 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_domains_local_enabled ON mail_domains(is_local, is_enabled)
+2025-12-19 06:59:46.522 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_username_domain ON users(username, domain)
+2025-12-19 06:59:46.523 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_enabled ON users(is_enabled)
+2025-12-19 06:59:46.524 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 06:59:46.525 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_read ON emails(owner, is_read, is_deleted)
+2025-12-19 06:59:46.526 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 06:59:46.527 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_sender ON emails(sender)
+2025-12-19 06:59:46.533 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_mail_queue_next_retry ON mail_queue(next_retry_at) WHERE status = 'pe...
+2025-12-19 06:59:46.534 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_delivery_logs_created ON delivery_logs(created_at DESC)
+2025-12-19 06:59:46.539 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 06:59:46.547 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_users_updated_at ON users
+2025-12-19 06:59:46.548 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_users_updated_at     BEFORE UPDATE ON users     FOR EACH ROW     EXECUTE FUNCT...
+2025-12-19 06:59:46.548 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: DROP TRIGGER IF EXISTS update_mail_queue_updated_at ON mail_queue
+2025-12-19 06:59:46.550 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: CREATE TRIGGER update_mail_queue_updated_at     BEFORE UPDATE ON mail_queue     FOR EACH ROW     EXE...
+2025-12-19 06:59:46.551 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE users IS '用户表，存储邮箱用户信息'
+2025-12-19 06:59:46.552 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE emails IS '邮件表，存储所有接收的邮件'
+2025-12-19 06:59:46.552 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE mail_queue IS '邮件队列表，用于管理待发送的外部邮件'
+2025-12-19 06:59:46.552 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON TABLE delivery_logs IS '发送日志表，记录邮件发送结果'
+2025-12-19 06:59:46.553 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.raw_content IS '原始邮件内容，包含完整的邮件头和正文'
+2025-12-19 06:59:46.553 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN emails.owner IS '邮件所属用户的邮箱地址'
+2025-12-19 06:59:46.554 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.quota_bytes IS '用户邮箱容量限制（字节）'
+2025-12-19 06:59:46.554 [com.yhm.smtp.SmtpServerMain.main()] DEBUG com.yhm.smtp.db.DatabaseInitializer - 执行 SQL: COMMENT ON COLUMN users.used_bytes IS '用户已使用的邮箱容量（字节）'
+2025-12-19 06:59:46.554 [com.yhm.smtp.SmtpServerMain.main()] INFO  com.yhm.smtp.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 06:59:46.555 [com.yhm.smtp.SmtpServerMain.main()] ERROR com.yhm.smtp.SmtpServerMain - 启动服务器失败: Address already in use
+java.net.BindException: Address already in use
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:522)
+	at java.base/sun.nio.ch.Net.bind(Net.java:511)
+	at java.base/sun.nio.ch.NioSocketImpl.bind(NioSocketImpl.java:641)
+	at java.base/java.net.ServerSocket.bind(ServerSocket.java:326)
+	at java.base/java.net.ServerSocket.<init>(ServerSocket.java:222)
+	at java.base/java.net.ServerSocket.<init>(ServerSocket.java:138)
+	at com.yhm.smtp.server.SmtpServer.start(SmtpServer.java:65)
+	at com.yhm.smtp.SmtpServerMain.startServer(SmtpServerMain.java:56)
+	at com.yhm.smtp.SmtpServerMain.lambda$0(SmtpServerMain.java:41)
+	at java.base/jdk.internal.vm.ScopedValueContainer.runWithoutScope(ScopedValueContainer.java:112)
+	at java.base/jdk.internal.vm.ScopedValueContainer.run(ScopedValueContainer.java:98)
+	at java.base/java.lang.ScopedValue$Carrier.run(ScopedValue.java:466)
+	at com.yhm.smtp.SmtpServerMain.main(SmtpServerMain.java:40)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.codehaus.mojo.exec.AbstractExecJavaBase.executeMainMethod(AbstractExecJavaBase.java:402)
+	at org.codehaus.mojo.exec.ExecJavaMojo.executeMainMethod(ExecJavaMojo.java:142)
+	at org.codehaus.mojo.exec.AbstractExecJavaBase.doExecClassLoader(AbstractExecJavaBase.java:377)
+	at org.codehaus.mojo.exec.AbstractExecJavaBase.lambda$execute$0(AbstractExecJavaBase.java:287)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2025-12-19 06:59:46.559 [virtual-45] INFO  com.yhm.smtp.SmtpServerMain - 收到关闭信号，正在停止服务器...

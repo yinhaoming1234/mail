@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/main}">
+
+<head>
+    <title>群发邮件 - 邮件管理后台</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <!-- 页面标题 -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">群发邮件</h2>
+                    <p class="text-muted mb-0">向多个用户发送通知邮件</p>
+                </div>
+            </div>
+
+            <!-- 成功/警告/错误提示 -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span th:text="${warning}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-x-circle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- 群发邮件表单 -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-envelope-paper me-2"></i>编写群发邮件
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/broadcast}" th:object="${broadcastForm}" method="post">
+                        <!-- 目标选择 -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">目标域名（可选）</label>
+                                <select class="form-select" th:field="*{targetDomain}">
+                                    <option value="">所有域名</option>
+                                    <option th:each="domain : ${domains}" th:value="${domain.domain}"
+                                        th:text="${domain.domain}"></option>
+                                </select>
+                                <div class="form-text">留空则发送给所有用户</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">发送选项</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" th:field="*{adminOnly}"
+                                        id="adminOnly">
+                                    <label class="form-check-label" for="adminOnly">
+                                        仅发送给管理员
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 邮件主题 -->
+                        <div class="mb-3">
+                            <label class="form-label">邮件主题 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{subject}" placeholder="请输入邮件主题"
+                                required>
+                            <div th:if="${#fields.hasErrors('subject')}" class="invalid-feedback d-block">
+                                <span th:errors="*{subject}"></span>
+                            </div>
+                        </div>
+
+                        <!-- 邮件内容 -->
+                        <div class="mb-3">
+                            <label class="form-label">邮件内容 <span class="text-danger">*</span></label>
+                            <textarea class="form-control" th:field="*{body}" rows="10" placeholder="请输入邮件内容"
+                                required></textarea>
+                            <div th:if="${#fields.hasErrors('body')}" class="invalid-feedback d-block">
+                                <span th:errors="*{body}"></span>
+                            </div>
+                        </div>
+
+                        <!-- 预览区域 -->
+                        <div id="recipient-preview" class="mb-3">
+                            <!-- HTMX 预览内容将在这里显示 -->
+                        </div>
+
+                        <!-- 提交按钮 -->
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary" hx-post="/broadcast/preview"
+                                hx-target="#recipient-preview" hx-include="[name='targetDomain'], [name='adminOnly']">
+                                <i class="bi bi-eye me-1"></i>预览收件人
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send me-1"></i>发送群发邮件
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

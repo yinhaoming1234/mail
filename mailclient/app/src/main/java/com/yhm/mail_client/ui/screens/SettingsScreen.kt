@@ -17,6 +17,7 @@ import com.yhm.mail_client.ui.viewmodel.EmailViewModel
 fun SettingsScreen(
     viewModel: EmailViewModel,
     onNavigateBack: () -> Unit,
+    onNavigateToChangePassword: () -> Unit = {},
     onLogout: () -> Unit
 ) {
     val currentAccount by viewModel.currentAccount.collectAsState()
@@ -61,9 +62,7 @@ fun SettingsScreen(
                     SettingsClickableItem(
                         icon = Icons.Default.Lock,
                         title = "修改密码",
-                        onClick = {
-                            // TODO: Navigate to change password screen
-                        }
+                        onClick = onNavigateToChangePassword
                     )
                 }
             }

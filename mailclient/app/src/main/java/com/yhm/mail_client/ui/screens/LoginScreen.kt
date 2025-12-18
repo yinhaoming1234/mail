@@ -10,13 +10,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.yhm.mail_client.R
+import com.yhm.mail_client.data.model.EmailAccount
+import com.yhm.mail_client.data.network.ApiClient
 import com.yhm.mail_client.ui.viewmodel.EmailViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +32,9 @@ fun LoginScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    
+    val apiClient = remember { ApiClient() }
 
     Scaffold(
         topBar = {
@@ -171,12 +175,40 @@ fun LoginScreen(
                     }
 
                     isLoading = true
-                    // TODO: Implement actual login logic
-                    // For now, just simulate login
-                    kotlinx.coroutines.GlobalScope.launch {
-                        kotlinx.coroutines.delay(1000)
-                        isLoading = false
-                        onLoginSuccess()
+                    errorMessage = null
+                    
+                    coroutineScope.launch {
+                        val result = apiClient.login(email, password)
+                        
+                        result.fold(
+                            onSuccess = { response ->
+                                // 登录成功，创建账户并保存
+                                val username = response.optString("username", email.substringBefore("@"))
+                                val domain = response.optString("domain", "localhost")
+                                
+                                val account = EmailAccount(
+                                    name = username,
+                                    email = email,
+                                    pop3Host = com.yhm.mail_client.data.network.ServerConfig.POP3_HOST,
+                                    pop3Port = com.yhm.mail_client.data.network.ServerConfig.POP3_PORT,
+                                    username = email,
+                                    password = password,
+                                    useSsl = com.yhm.mail_client.data.network.ServerConfig.POP3_USE_SSL,
+                                    smtpHost = com.yhm.mail_client.data.network.ServerConfig.SMTP_HOST,
+                                    smtpPort = com.yhm.mail_client.data.network.ServerConfig.SMTP_PORT,
+                                    smtpUseSsl = com.yhm.mail_client.data.network.ServerConfig.SMTP_USE_SSL,
+                                    isDefault = true
+                                )
+                                
+                                viewModel.saveAccount(account)
+                                isLoading = false
+                                onLoginSuccess()
+                            },
+                            onFailure = { error ->
+                                isLoading = false
+                                errorMessage = error.message ?: "登录失败"
+                            }
+                        )
                     }
                 },
                 modifier = Modifier

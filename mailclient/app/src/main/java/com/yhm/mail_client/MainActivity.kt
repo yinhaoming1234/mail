@@ -18,7 +18,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.yhm.mail_client.ui.navigation.Screen
-import com.yhm.mail_client.ui.screens.*
+import com.yhm.mail_client.ui.screens.AccountSetupScreen
+import com.yhm.mail_client.ui.screens.ChangePasswordScreen
+import com.yhm.mail_client.ui.screens.ComposeEmailScreen
+import com.yhm.mail_client.ui.screens.LoginScreen
+import com.yhm.mail_client.ui.screens.MailDetailScreen
+import com.yhm.mail_client.ui.screens.MailListScreen
+import com.yhm.mail_client.ui.screens.RegisterScreen
+import com.yhm.mail_client.ui.screens.SettingsScreen
 import com.yhm.mail_client.ui.theme.MailClientTheme
 import com.yhm.mail_client.ui.viewmodel.EmailViewModel
 
@@ -115,11 +122,27 @@ fun MailClientApp() {
                 onNavigateBack = {
                     navController.popBackStack()
                 },
+                onNavigateToChangePassword = {
+                    navController.navigate(Screen.ChangePassword.route)
+                },
                 onLogout = {
                     viewModel.logout()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
+                }
+            )
+        }
+        
+        // Change Password Screen
+        composable(Screen.ChangePassword.route) {
+            ChangePasswordScreen(
+                viewModel = viewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onPasswordChanged = {
+                    navController.popBackStack()
                 }
             )
         }

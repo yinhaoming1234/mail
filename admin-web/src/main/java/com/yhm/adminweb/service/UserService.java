@@ -88,6 +88,7 @@ public class UserService {
                 .passwordHash(passwordEncoder.encode(form.getPassword()))
                 .quotaBytes(form.getQuotaBytes() != null ? form.getQuotaBytes() : 1073741824L)
                 .isEnabled(form.getIsEnabled() != null ? form.getIsEnabled() : true)
+                .isAdmin(form.getIsAdmin() != null ? form.getIsAdmin() : false)
                 .build();
 
         return userRepository.save(user);
@@ -121,6 +122,9 @@ public class UserService {
         }
         if (form.getIsEnabled() != null) {
             user.setIsEnabled(form.getIsEnabled());
+        }
+        if (form.getIsAdmin() != null) {
+            user.setIsAdmin(form.getIsAdmin());
         }
 
         return userRepository.save(user);
@@ -159,6 +163,35 @@ public class UserService {
     }
 
     /**
+     * 修改密码（需验证当前密码）
+     * 
+     * @param email 用户邮箱
+     * @param currentPassword 当前密码
+     * @param newPassword 新密码
+     * @return true 如果密码修改成功
+     * @throws IllegalArgumentException 如果用户不存在
+     * @throws SecurityException 如果当前密码验证失败
+     */
+    @Transactional
+    public boolean changePassword(String email, String currentPassword, String newPassword) {
+        User user = userRepository.findByEmail(email.toLowerCase())
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        
+        // 验证当前密码 - 支持明文密码（开发测试）和加密密码
+        boolean passwordMatch = passwordEncoder.matches(currentPassword, user.getPasswordHash()) 
+                || currentPassword.equals(user.getPasswordHash());
+        
+        if (!passwordMatch) {
+            throw new SecurityException("当前密码错误");
+        }
+        
+        // 更新密码
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return true;
+    }
+
+    /**
      * 更新配额
      */
     @Transactional
@@ -174,6 +207,56 @@ public class UserService {
      */
     public List<User> findTopByStorage(int limit) {
         return userRepository.findTopUsersByStorage(Pageable.ofSize(limit));
+    }
+
+    /**
+     * 授予管理员权限
+     */
+    @Transactional
+    public User grantAdmin(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setIsAdmin(true);
+        return userRepository.save(user);
+    }
+
+    /**
+     * 撤销管理员权限
+     */
+    @Transactional
+    public User revokeAdmin(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setIsAdmin(false);
+        return userRepository.save(user);
+    }
+
+    /**
+     * 切换管理员权限
+     */
+    @Transactional
+    public User toggleAdmin(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        user.setIsAdmin(!user.getIsAdmin());
+        return userRepository.save(user);
+    }
+
+    /**
+     * 获取所有管理员
+     */
+    public List<User> findAllAdmins() {
+        return userRepository.findByIsAdminTrue();
+    }
+
+    /**
+     * 获取所有启用的用户邮箱（用于群发）
+     */
+    public List<String> findAllEnabledEmails() {
+        return userRepository.findByIsEnabledTrue()
+                .stream()
+                .map(User::getEmail)
+                .toList();
     }
 }
 

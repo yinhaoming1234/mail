@@ -1,111 +1,213 @@
-# Android 客户端对接 POP3 服务器集成指南
+# 邮件收发系统集成指南
 
 ## 概述
 
-本文档说明如何将 Android 邮件客户端与自定义 POP3 服务器集成使用。
+本文档说明如何部署和使用完整的邮件收发系统，包括：
+- **服务器管理模块** (admin-web): 用户管理、域名管理、群发邮件
+- **邮件传输模块**: SMTP服务器(发信)、POP3服务器(收信)
+- **Android客户端**: 邮件收发、用户注册、密码修改
+
+## 系统架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    服务器端 (192.168.1.106)                   │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │ SMTP Server │  │ POP3 Server │  │   Admin Web (8000)  │  │
+│  │   (2525)    │  │   (1100)    │  │  - 用户管理         │  │
+│  │  发送邮件   │  │  接收邮件   │  │  - 授权/消权        │  │
+│  └──────┬──────┘  └──────┬──────┘  │  - 群发邮件         │  │
+│         │                │         │  - API接口          │  │
+│         └────────┬───────┘         └──────────┬──────────┘  │
+│                  │                            │              │
+│         ┌────────▼────────────────────────────▼────────┐    │
+│         │           PostgreSQL (5432)                   │    │
+│         │  - users (用户表, 含is_admin字段)             │    │
+│         │  - emails (邮件表)                            │    │
+│         │  - mail_domains (域名表)                      │    │
+│         └───────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              │ 网络通信
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Android 客户端                            │
+├─────────────────────────────────────────────────────────────┤
+│  - 用户登录/注册 (调用 /api/users/*)                        │
+│  - 邮件收发 (SMTP/POP3)                                     │
+│  - 密码修改 (调用 /api/users/change-password)               │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ## 前置条件
 
-- Java 25+ (用于运行 POP3 服务器)
+- Java 25+ (服务器端)
+- Java 17 (Android客户端)
 - Maven 3.8+
-- PostgreSQL 12+
+- PostgreSQL 16+
+- Docker (可选，用于数据库)
 - Android Studio
-- Android 设备/模拟器 (API 26+)
+- Android 设备 (API 26+)
 
-## POP3 服务器配置
+## 快速启动
 
-### 1. 数据库准备
-
-确保 PostgreSQL 数据库运行:
+### 使用启动脚本 (推荐)
 
 ```bash
-# 检查 PostgreSQL 状态
-pg_ctl status
+# 赋予执行权限
+chmod +x start-servers.sh
 
-# 如果未运行，启动 PostgreSQL
-pg_ctl start
+# 启动所有服务
+./start-servers.sh all
+
+# 或单独启动某个服务
+./start-servers.sh db      # 只启动数据库
+./start-servers.sh smtp    # 只启动SMTP服务器
+./start-servers.sh pop3    # 只启动POP3服务器
+./start-servers.sh admin   # 只启动管理后台
 ```
 
-创建数据库和测试数据:
+### 手动启动
+
+#### 1. 启动数据库
 
 ```bash
-# 连接到 PostgreSQL
-psql -U postgres
+# 使用Docker启动PostgreSQL
+docker-compose up -d postgres
 
-# 创建数据库
-CREATE DATABASE maildb;
-
-# 退出 psql
-\q
-
-# 导入初始数据
-psql -U postgres -d maildb < init.sql
+# 等待数据库就绪
+sleep 5
 ```
 
-### 2. 启动 POP3 服务器
+#### 2. 启动SMTP服务器
+
+```bash
+cd smtp-server
+mvn clean package -DskipTests
+java --enable-preview -jar target/smtp-server-1.0-SNAPSHOT.jar
+```
+
+#### 3. 启动POP3服务器
 
 ```bash
 cd pop3-server
-
-# 构建项目
-mvn clean package
-
-# 启动服务器
+mvn clean package -DskipTests
 java --enable-preview -jar target/pop3-server-1.0-SNAPSHOT.jar
 ```
 
-服务器将在以下配置下启动:
-- **地址**: localhost
-- **端口**: 1100
-- **SSL**: 否 (明文连接)
+#### 4. 启动管理后台
 
-验证启动成功:
-```
-[main] INFO com.yhm.pop3.Pop3Server - POP3 server started on port 1100
-[main] INFO com.yhm.pop3.Pop3Server - Maximum connections: 500
+```bash
+cd admin-web
+mvn spring-boot:run
 ```
 
-### 3. 测试账号
+### 服务端口
 
-默认测试账号 (根据 `init.sql`):
-- **用户名**: test@localhost
-- **密码**: password123
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| PostgreSQL | 5432 | 数据库 |
+| SMTP | 2525 | 发送邮件 |
+| POP3 | 1100 | 接收邮件 |
+| Admin Web | 8000 | 管理后台 |
+
+### 测试账号
+
+| 邮箱 | 密码 | 角色 |
+|------|------|------|
+| admin@localhost | admin123 | 管理员 |
+| test@localhost | password123 | 普通用户 |
+| user@example.com | user123 | 普通用户 |
+
+## 管理后台功能
+
+访问地址: `http://192.168.1.106:8000`
+
+### 用户管理
+
+1. **创建用户**: 点击"添加用户"，填写用户名、域名、密码
+2. **授权管理员**: 点击用户行的权限图标，授予/撤销管理员权限
+3. **禁用用户**: 点击眼睛图标切换用户启用状态
+4. **重置密码**: 点击锁图标重置用户密码
+
+### 群发邮件
+
+1. 点击左侧菜单"群发邮件"
+2. 选择目标域名（可选）或勾选"仅发送给管理员"
+3. 填写邮件主题和内容
+4. 点击"预览收件人"查看将发送给多少用户
+5. 点击"发送群发邮件"
+
+### API接口
+
+管理后台提供REST API供Android客户端调用：
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| /api/users/register | POST | 用户注册 |
+| /api/users/login | POST | 用户登录验证 |
+| /api/users/change-password | POST | 修改密码 |
+| /api/domains | GET | 获取可用域名列表 |
+| /api/users/check-email | GET | 检查邮箱是否可用 |
 
 ## Android 客户端配置
 
-### 1. 快速配置 (推荐)
+### 服务器地址配置
 
-1. 打开应用
-2. 点击 "Add Account"
-3. 点击 "Use Local Server" 按钮
-4. 应用会自动填充:
-   - **POP3 Host**: localhost
-   - **POP3 Port**: 1100
-   - **POP3 SSL**: 关闭
-   - **SMTP Host**: localhost
-   - **SMTP Port**: 2525
-   - **SMTP SSL**: 关闭
+服务器IP地址配置在 `ServerConfig.kt` 文件中：
 
-5. 输入账户信息:
-   - **Account Name**: 任意名称 (例如: "Local Test")
-   - **Email Address**: test@localhost
-   - **Username**: test@localhost
-   - **Password**: password123
+```kotlin
+// mailclient/app/src/main/java/com/yhm/mail_client/data/network/ServerConfig.kt
+object ServerConfig {
+    const val SERVER_IP = "192.168.1.106"  // 修改为你的服务器IP
+    const val API_BASE_URL = "http://$SERVER_IP:8000"
+    const val SMTP_HOST = SERVER_IP
+    const val SMTP_PORT = 2525
+    const val POP3_HOST = SERVER_IP
+    const val POP3_PORT = 1100
+}
+```
 
-6. 点击 "Test Connection" 验证连接
-7. 点击 "Save Account" 保存配置
+### 用户注册
 
-### 2. 手动配置
+1. 打开应用，在登录页点击"立即注册"
+2. 输入用户名（将作为邮箱前缀）
+3. 选择域名（从服务器获取可用域名列表）
+4. 设置密码（至少6个字符）
+5. 确认密码
+6. 点击"注册"按钮
+7. 注册成功后自动跳转到登录页
 
-如果需要连接到其他服务器:
+### 用户登录
 
-1. **POP3 Host**: 服务器地址
-2. **Port**: 服务器端口
-   - 标准 POP3: 110 (无 SSL)
-   - POP3S: 995 (使用 SSL)
-   - 自定义服务器: 1100 (无 SSL)
-3. **SSL/TLS**: 根据服务器配置选择
-4. 输入相应的用户凭据
+1. 输入完整邮箱地址（如 test@localhost）
+2. 输入密码
+3. 点击"登录"按钮
+4. 登录成功后自动配置SMTP/POP3服务器并进入邮件列表
+
+### 修改密码
+
+1. 进入"设置"页面
+2. 点击"修改密码"
+3. 输入当前密码
+4. 输入新密码（至少6个字符）
+5. 确认新密码
+6. 点击"确认修改"
+
+### 真机调试配置
+
+1. **确保手机和电脑在同一局域网**
+2. **修改ServerConfig.kt中的SERVER_IP为电脑IP**
+3. **网络安全配置已允许192.168.1.106的明文流量**
+
+网络安全配置文件：
+```xml
+<!-- mailclient/app/src/main/res/xml/network_security_config.xml -->
+<domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="false">192.168.1.106</domain>
+</domain-config>
+```
 
 ## 功能说明
 

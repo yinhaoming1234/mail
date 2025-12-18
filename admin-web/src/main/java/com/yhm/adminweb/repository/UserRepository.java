@@ -51,5 +51,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u ORDER BY u.usedBytes DESC")
     List<User> findTopUsersByStorage(Pageable pageable);
+
+    List<User> findByIsAdminTrue();
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.isAdmin = true")
+    long countAdmins();
 }
 

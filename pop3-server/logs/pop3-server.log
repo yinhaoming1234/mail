@@ -1,32 +1,138 @@
-2025-12-18 20:52:15.001 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
-2025-12-18 20:52:15.004 [main] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
-2025-12-18 20:52:15.004 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
-2025-12-18 20:52:15.004 [main] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25.0.1
-2025-12-18 20:52:15.005 [main] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
-2025-12-18 20:52:15.005 [main] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
-2025-12-18 20:52:15.008 [main] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
-2025-12-18 20:52:15.009 [main] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
-2025-12-18 20:52:15.011 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
-2025-12-18 20:52:15.012 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
-2025-12-18 20:52:15.019 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
-2025-12-18 20:52:15.028 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
-2025-12-18 20:52:15.178 [main] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@cad498c
-2025-12-18 20:52:15.178 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
-2025-12-18 20:52:15.187 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
-2025-12-18 20:52:15.191 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
-2025-12-18 20:52:15.193 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
-2025-12-18 20:52:15.196 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
-2025-12-18 20:52:15.210 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
-2025-12-18 20:52:15.214 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
-2025-12-18 20:52:15.215 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
-2025-12-18 20:52:15.223 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
-2025-12-18 20:52:15.224 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
-2025-12-18 20:52:15.225 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
-2025-12-18 20:52:15.226 [main] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
-2025-12-18 20:52:15.226 [main] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
-2025-12-18 21:38:22.234 [virtual-27] INFO  com.yhm.pop3.Pop3ServerMain - 收到关闭信号，正在停止 POP3 服务器...
-2025-12-18 21:38:22.390 [virtual-27] INFO  com.yhm.pop3.server.Pop3Server - 正在停止 POP3 服务器...
-2025-12-18 21:38:22.407 [virtual-27] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown initiated...
-2025-12-18 21:38:22.465 [virtual-27] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown completed.
-2025-12-18 21:38:22.561 [virtual-27] INFO  com.yhm.pop3.db.DatabaseConfig - 数据库连接池已关闭
-2025-12-18 21:38:22.563 [virtual-27] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已停止
+2025-12-19 05:39:09.692 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 05:39:09.694 [main] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 05:39:09.695 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 05:39:09.695 [main] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25.0.1
+2025-12-19 05:39:09.695 [main] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 05:39:09.695 [main] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 05:39:09.698 [main] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 05:39:09.698 [main] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 05:39:09.701 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 05:39:09.702 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 05:39:09.707 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 05:39:09.712 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 05:39:09.831 [main] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@cad498c
+2025-12-19 05:39:09.832 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 05:39:09.837 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 05:39:09.838 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 05:39:09.839 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 05:39:09.840 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 05:39:09.869 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 05:39:09.872 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 05:39:09.872 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 05:39:09.880 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 05:39:09.880 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 05:39:09.881 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 05:39:09.882 [main] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
+2025-12-19 05:39:09.882 [main] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
+2025-12-19 05:56:10.196 [virtual-27] INFO  com.yhm.pop3.Pop3ServerMain - 收到关闭信号，正在停止 POP3 服务器...
+2025-12-19 05:56:11.428 [virtual-27] INFO  com.yhm.pop3.server.Pop3Server - 正在停止 POP3 服务器...
+2025-12-19 05:56:11.487 [virtual-27] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown initiated...
+2025-12-19 05:56:11.761 [virtual-27] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown completed.
+2025-12-19 05:56:11.769 [virtual-27] INFO  com.yhm.pop3.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 05:56:11.775 [virtual-27] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已停止
+2025-12-19 06:10:32.918 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 06:10:32.919 [main] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 06:10:32.919 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 06:10:32.919 [main] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25.0.1
+2025-12-19 06:10:32.921 [main] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 06:10:32.921 [main] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 06:10:32.930 [main] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 06:10:32.930 [main] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 06:10:32.933 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 06:10:32.936 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 06:10:32.946 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 06:10:32.955 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 06:10:33.236 [main] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@29e495ff
+2025-12-19 06:10:33.237 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 06:10:33.248 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 06:10:33.249 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 06:10:33.250 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 06:10:33.253 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 06:10:33.280 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 06:10:33.282 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 06:10:33.284 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 06:10:33.291 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 06:10:33.292 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 06:10:33.292 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 06:10:33.293 [main] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
+2025-12-19 06:10:33.293 [main] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
+2025-12-19 06:29:58.591 [virtual-26] INFO  com.yhm.pop3.Pop3ServerMain - 收到关闭信号，正在停止 POP3 服务器...
+2025-12-19 06:29:58.644 [virtual-26] INFO  com.yhm.pop3.server.Pop3Server - 正在停止 POP3 服务器...
+2025-12-19 06:29:58.651 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown initiated...
+2025-12-19 06:29:58.673 [virtual-26] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown completed.
+2025-12-19 06:29:58.673 [virtual-26] INFO  com.yhm.pop3.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 06:29:58.674 [virtual-26] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已停止
+2025-12-19 06:58:16.709 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 06:58:16.710 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 06:58:16.710 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 06:58:16.710 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25.0.1
+2025-12-19 06:58:16.710 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 06:58:16.710 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 06:58:16.712 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 06:58:16.712 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 06:58:16.713 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 06:58:16.714 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 06:58:16.717 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://192.168.1.106:5432/maildb
+2025-12-19 06:58:16.719 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 06:58:16.826 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@4a0c5797
+2025-12-19 06:58:16.827 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 06:58:16.832 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 06:58:16.834 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 06:58:16.835 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 06:58:16.836 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 06:58:16.852 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 06:58:16.855 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 06:58:16.855 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 06:58:16.861 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 06:58:16.862 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 06:58:16.862 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 06:58:16.863 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
+2025-12-19 06:58:16.863 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
+2025-12-19 06:59:48.170 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 06:59:48.170 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 06:59:48.170 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 06:59:48.170 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25.0.1
+2025-12-19 06:59:48.171 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 06:59:48.171 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 06:59:48.173 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 06:59:48.173 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 06:59:48.174 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 06:59:48.175 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 06:59:48.178 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://192.168.1.106:5432/maildb
+2025-12-19 06:59:48.179 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 06:59:48.281 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@27b02e94
+2025-12-19 06:59:48.282 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 06:59:48.287 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 06:59:48.288 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 06:59:48.289 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 06:59:48.291 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 06:59:48.294 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 06:59:48.295 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 06:59:48.296 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 06:59:48.301 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 06:59:48.302 [com.yhm.pop3.Pop3ServerMain.main()] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 06:59:48.302 [com.yhm.pop3.Pop3ServerMain.main()] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 06:59:48.303 [com.yhm.pop3.Pop3ServerMain.main()] ERROR com.yhm.pop3.Pop3ServerMain - 启动 POP3 服务器失败: Address already in use
+java.net.BindException: Address already in use
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:522)
+	at java.base/sun.nio.ch.Net.bind(Net.java:511)
+	at java.base/sun.nio.ch.NioSocketImpl.bind(NioSocketImpl.java:641)
+	at java.base/java.net.ServerSocket.bind(ServerSocket.java:326)
+	at java.base/java.net.ServerSocket.<init>(ServerSocket.java:222)
+	at java.base/java.net.ServerSocket.<init>(ServerSocket.java:138)
+	at com.yhm.pop3.server.Pop3Server.start(Pop3Server.java:72)
+	at com.yhm.pop3.Pop3ServerMain.startServer(Pop3ServerMain.java:88)
+	at com.yhm.pop3.Pop3ServerMain.lambda$0(Pop3ServerMain.java:53)
+	at java.base/jdk.internal.vm.ScopedValueContainer.runWithoutScope(ScopedValueContainer.java:112)
+	at java.base/jdk.internal.vm.ScopedValueContainer.run(ScopedValueContainer.java:98)
+	at java.base/java.lang.ScopedValue$Carrier.run(ScopedValue.java:466)
+	at com.yhm.pop3.Pop3ServerMain.main(Pop3ServerMain.java:52)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.codehaus.mojo.exec.AbstractExecJavaBase.executeMainMethod(AbstractExecJavaBase.java:402)
+	at org.codehaus.mojo.exec.ExecJavaMojo.executeMainMethod(ExecJavaMojo.java:142)
+	at org.codehaus.mojo.exec.AbstractExecJavaBase.doExecClassLoader(AbstractExecJavaBase.java:377)
+	at org.codehaus.mojo.exec.AbstractExecJavaBase.lambda$execute$0(AbstractExecJavaBase.java:287)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2025-12-19 06:59:48.305 [virtual-45] INFO  com.yhm.pop3.Pop3ServerMain - 收到关闭信号，正在停止 POP3 服务器...
