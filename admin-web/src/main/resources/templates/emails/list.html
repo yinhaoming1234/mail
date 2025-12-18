@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>邮件管理</title>
+</head>
+<body>
+    <th:block layout:fragment="breadcrumb">
+        <a th:href="@{/}">首页</a>
+        <span class="separator">/</span>
+        <span>邮件管理</span>
+    </th:block>
+
+    <div layout:fragment="content" class="page-emails">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <h1>邮件管理</h1>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <div class="search-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" 
+                       name="search" 
+                       placeholder="搜索发件人或主题..." 
+                       th:value="${search}"
+                       hx-get="/emails/table"
+                       hx-target="#email-table-container"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-include="[name='search']">
+            </div>
+        </div>
+
+        <!-- 表格区域 -->
+        <div id="email-table-container">
+            <th:block th:replace="~{emails/fragments/table :: email-table}"/>
+        </div>
+    </div>
+</body>
+</html>
+

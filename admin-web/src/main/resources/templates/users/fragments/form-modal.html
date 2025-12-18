@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 用户表单模态框 -->
+    <div th:fragment="user-form-modal" class="modal-backdrop" onclick="closeModal(event)">
+        <div class="modal modal-lg" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 th:text="${isEdit} ? '编辑用户' : '添加用户'">添加用户</h2>
+                <button class="btn btn-icon btn-ghost" onclick="closeModalContainer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form th:action="@{/users}" 
+                  th:object="${userForm}" 
+                  method="post"
+                  hx-post="/users"
+                  hx-target="#modal-container"
+                  hx-swap="innerHTML">
+                
+                <input type="hidden" th:field="*{id}">
+                
+                <div class="modal-body">
+                    <!-- 错误提示 -->
+                    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+                    
+                    <!-- 用户名和域名 -->
+                    <div class="form-row">
+                        <div class="form-group flex-2">
+                            <label for="username">用户名 <span class="required">*</span></label>
+                            <input type="text" 
+                                   id="username" 
+                                   th:field="*{username}" 
+                                   placeholder="用户名"
+                                   th:classappend="${#fields.hasErrors('username')} ? 'error' : ''">
+                            <span th:if="${#fields.hasErrors('username')}" class="error-message" th:errors="*{username}">错误信息</span>
+                        </div>
+                        
+                        <div class="form-group flex-1">
+                            <label for="domain">域名 <span class="required">*</span></label>
+                            <select id="domain" 
+                                    th:field="*{domain}"
+                                    th:classappend="${#fields.hasErrors('domain')} ? 'error' : ''">
+                                <option value="">选择域名</option>
+                                <option th:each="d : ${domains}" 
+                                        th:value="${d.domain}" 
+                                        th:text="${d.domain}">域名</option>
+                            </select>
+                            <span th:if="${#fields.hasErrors('domain')}" class="error-message" th:errors="*{domain}">错误信息</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 密码 -->
+                    <div class="form-group">
+                        <label for="password">
+                            密码 
+                            <span th:unless="${isEdit}" class="required">*</span>
+                            <span th:if="${isEdit}" class="hint">(留空则不修改)</span>
+                        </label>
+                        <input type="password" 
+                               id="password" 
+                               th:field="*{password}" 
+                               placeholder="输入密码"
+                               th:classappend="${#fields.hasErrors('password')} ? 'error' : ''">
+                        <span th:if="${#fields.hasErrors('password')}" class="error-message" th:errors="*{password}">错误信息</span>
+                    </div>
+                    
+                    <!-- 配额 -->
+                    <div class="form-group">
+                        <label for="quotaBytes">邮箱配额</label>
+                        <div class="quota-input-group">
+                            <input type="number" 
+                                   id="quotaValue" 
+                                   value="1"
+                                   min="1"
+                                   onchange="updateQuotaBytes()">
+                            <select id="quotaUnit" onchange="updateQuotaBytes()">
+                                <option value="1073741824" selected>GB</option>
+                                <option value="1048576">MB</option>
+                            </select>
+                            <input type="hidden" th:field="*{quotaBytes}" id="quotaBytes">
+                        </div>
+                        <span th:if="${#fields.hasErrors('quotaBytes')}" class="error-message" th:errors="*{quotaBytes}">错误信息</span>
+                    </div>
+                    
+                    <!-- 启用状态 -->
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" th:field="*{isEnabled}">
+                            <span class="checkbox-custom"></span>
+                            <span>启用用户</span>
+                        </label>
+                        <p class="form-hint">禁用后用户将无法登录和收发邮件</p>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModalContainer()">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="${isEdit} ? '保存修改' : '创建用户'">保存</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        // 初始化配额输入
+        (function() {
+            var quotaBytes = /*[[${userForm.quotaBytes}]]*/ 1073741824;
+            if (quotaBytes) {
+                var quotaValue = document.getElementById('quotaValue');
+                var quotaUnit = document.getElementById('quotaUnit');
+                if (quotaBytes >= 1073741824) {
+                    quotaValue.value = Math.round(quotaBytes / 1073741824);
+                    quotaUnit.value = '1073741824';
+                } else {
+                    quotaValue.value = Math.round(quotaBytes / 1048576);
+                    quotaUnit.value = '1048576';
+                }
+            }
+        })();
+        
+        function updateQuotaBytes() {
+            var value = document.getElementById('quotaValue').value;
+            var unit = document.getElementById('quotaUnit').value;
+            document.getElementById('quotaBytes').value = value * unit;
+        }
+    </script>
+</body>
+</html>
+

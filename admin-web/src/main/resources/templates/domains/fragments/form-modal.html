@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 域名表单模态框 -->
+    <div th:fragment="domain-form-modal" class="modal-backdrop" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 th:text="${isEdit} ? '编辑域名' : '添加域名'">添加域名</h2>
+                <button class="btn btn-icon btn-ghost" onclick="closeModalContainer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form th:action="@{/domains}" 
+                  th:object="${domainForm}" 
+                  method="post"
+                  hx-post="/domains"
+                  hx-target="#modal-container"
+                  hx-swap="innerHTML">
+                
+                <input type="hidden" th:field="*{id}">
+                
+                <div class="modal-body">
+                    <!-- 错误提示 -->
+                    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+                    
+                    <!-- 域名 -->
+                    <div class="form-group">
+                        <label for="domain">域名 <span class="required">*</span></label>
+                        <input type="text" 
+                               id="domain" 
+                               th:field="*{domain}" 
+                               placeholder="example.com"
+                               th:classappend="${#fields.hasErrors('domain')} ? 'error' : ''"
+                               th:readonly="${isEdit}">
+                        <span th:if="${#fields.hasErrors('domain')}" class="error-message" th:errors="*{domain}">错误信息</span>
+                    </div>
+                    
+                    <!-- 描述 -->
+                    <div class="form-group">
+                        <label for="description">描述</label>
+                        <textarea id="description" 
+                                  th:field="*{description}" 
+                                  placeholder="域名描述（可选）"
+                                  rows="3"></textarea>
+                        <span th:if="${#fields.hasErrors('description')}" class="error-message" th:errors="*{description}">错误信息</span>
+                    </div>
+                    
+                    <!-- 选项 -->
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" th:field="*{isLocal}">
+                                <span class="checkbox-custom"></span>
+                                <span>本地域名</span>
+                            </label>
+                            <p class="form-hint">本地域名的邮件将直接投递到本地用户</p>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" th:field="*{isEnabled}">
+                                <span class="checkbox-custom"></span>
+                                <span>启用域名</span>
+                            </label>
+                            <p class="form-hint">禁用后将不再接收该域名的邮件</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModalContainer()">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="${isEdit} ? '保存修改' : '创建域名'">保存</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

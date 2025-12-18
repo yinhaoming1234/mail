@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 用户表格 -->
+    <div th:fragment="user-table" class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>用户</th>
+                    <th>域名</th>
+                    <th>配额使用</th>
+                    <th>状态</th>
+                    <th>最后登录</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${users.isEmpty()}">
+                    <td colspan="6" class="empty-cell">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                            </svg>
+                            <p>暂无用户</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="user : ${users}" th:id="${'user-' + user.id}">
+                    <th:block th:replace="~{users/fragments/table-row :: user-row-content(${user})}"/>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 分页 -->
+        <div th:if="${!users.isEmpty()}" class="pagination">
+            <span class="page-info">
+                共 <th:block th:text="${users.totalElements}">0</th:block> 条记录，
+                第 <th:block th:text="${users.number + 1}">1</th:block> / <th:block th:text="${users.totalPages}">1</th:block> 页
+            </span>
+            <div class="page-buttons">
+                <button th:disabled="${users.isFirst()}" 
+                        hx-get="/users/table"
+                        th:hx-vals="'page=' + ${users.number - 1} + '&search=' + ${search} + '&domain=' + ${selectedDomain}"
+                        hx-target="#user-table-container"
+                        class="btn btn-sm">上一页</button>
+                <button th:disabled="${users.isLast()}"
+                        hx-get="/users/table"
+                        th:hx-vals="'page=' + ${users.number + 1} + '&search=' + ${search} + '&domain=' + ${selectedDomain}"
+                        hx-target="#user-table-container"
+                        class="btn btn-sm">下一页</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

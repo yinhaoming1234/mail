@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 错误提示 Toast -->
+    <div th:fragment="error-toast" class="toast toast-error" id="error-toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        <span th:text="${error}">操作失败</span>
+        <button onclick="this.parentElement.remove()">×</button>
+    </div>
+    
+    <script>
+        // 自动移除 Toast
+        setTimeout(function() {
+            var toast = document.getElementById('error-toast');
+            if (toast) toast.remove();
+        }, 5000);
+    </script>
+</body>
+</html>
+

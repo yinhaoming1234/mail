@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 邮件表格 -->
+    <div th:fragment="email-table" class="table-container">
+        <table class="data-table email-table">
+            <thead>
+                <tr>
+                    <th class="col-checkbox">
+                        <input type="checkbox" id="select-all">
+                    </th>
+                    <th>发件人</th>
+                    <th>收件人</th>
+                    <th>主题</th>
+                    <th>大小</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${emails.isEmpty()}">
+                    <td colspan="7" class="empty-cell">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <p>暂无邮件</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="email : ${emails}" 
+                    th:id="${'email-' + email.id}"
+                    th:classappend="${!email.isRead} ? 'unread' : ''">
+                    <th:block th:replace="~{emails/fragments/table-row :: email-row-content(${email})}"/>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 分页 -->
+        <div th:if="${!emails.isEmpty()}" class="pagination">
+            <span class="page-info">
+                共 <th:block th:text="${emails.totalElements}">0</th:block> 条记录，
+                第 <th:block th:text="${emails.number + 1}">1</th:block> / <th:block th:text="${emails.totalPages}">1</th:block> 页
+            </span>
+            <div class="page-buttons">
+                <button th:disabled="${emails.isFirst()}" 
+                        hx-get="/emails/table"
+                        th:hx-vals="'page=' + ${emails.number - 1} + '&search=' + ${search}"
+                        hx-target="#email-table-container"
+                        class="btn btn-sm">上一页</button>
+                <button th:disabled="${emails.isLast()}"
+                        hx-get="/emails/table"
+                        th:hx-vals="'page=' + ${emails.number + 1} + '&search=' + ${search}"
+                        hx-target="#email-table-container"
+                        class="btn btn-sm">下一页</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

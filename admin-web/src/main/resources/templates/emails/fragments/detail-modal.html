@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 邮件详情模态框 -->
+    <div th:fragment="email-detail-modal" class="modal-backdrop" onclick="closeModal(event)">
+        <div class="modal modal-xl" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>邮件详情</h2>
+                <button class="btn btn-icon btn-ghost" onclick="closeModalContainer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="modal-body email-detail">
+                <!-- 邮件头部 -->
+                <div class="email-header-info">
+                    <div class="email-meta-row">
+                        <span class="label">发件人:</span>
+                        <span class="value" th:text="${email.sender}">sender@example.com</span>
+                    </div>
+                    <div class="email-meta-row">
+                        <span class="label">收件人:</span>
+                        <span class="value" th:text="${email.recipientsString}">recipient@example.com</span>
+                    </div>
+                    <div class="email-meta-row">
+                        <span class="label">主题:</span>
+                        <span class="value subject" th:text="${email.subject ?: '(无主题)'}">主题</span>
+                    </div>
+                    <div class="email-meta-row">
+                        <span class="label">时间:</span>
+                        <span class="value" th:text="${#temporals.format(email.receivedAt, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 00:00:00</span>
+                    </div>
+                    <div class="email-meta-row">
+                        <span class="label">大小:</span>
+                        <span class="value" th:text="${email.formattedSize}">0 KB</span>
+                    </div>
+                </div>
+                
+                <!-- 邮件正文 -->
+                <div class="email-body-section">
+                    <h4>邮件正文</h4>
+                    <div class="email-body-content">
+                        <pre th:text="${email.body ?: '(无正文)'}">邮件正文内容</pre>
+                    </div>
+                </div>
+                
+                <!-- 投递日志 -->
+                <div class="delivery-logs-section" th:if="${!#lists.isEmpty(deliveryLogs)}">
+                    <h4>投递记录</h4>
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>收件人</th>
+                                <th>状态</th>
+                                <th>远程主机</th>
+                                <th>SMTP 响应</th>
+                                <th>时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="log : ${deliveryLogs}">
+                                <td th:text="${log.recipient}">recipient@example.com</td>
+                                <td>
+                                    <span class="badge" th:classappend="${log.statusClass}" th:text="${log.statusText}">状态</span>
+                                </td>
+                                <td th:text="${log.remoteHost ?: '-'}">-</td>
+                                <td>
+                                    <span th:if="${log.smtpCode}" th:text="${log.smtpCode + ' ' + (log.smtpResponse ?: '')}">250 OK</span>
+                                    <span th:unless="${log.smtpCode}">-</span>
+                                </td>
+                                <td th:text="${#temporals.format(log.createdAt, 'MM-dd HH:mm:ss')}">00:00:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModalContainer()">关闭</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

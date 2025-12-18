@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 邮件表格行 -->
+    <th:block th:fragment="email-row">
+        <tr th:id="${'email-' + email.id}" th:classappend="${!email.isRead} ? 'unread' : ''">
+            <th:block th:replace="~{:: email-row-content(${email})}"/>
+        </tr>
+    </th:block>
+
+    <th:block th:fragment="email-row-content(email)">
+        <td class="col-checkbox">
+            <input type="checkbox" th:value="${email.id}">
+        </td>
+        <td>
+            <div class="sender-cell">
+                <div class="sender-avatar">
+                    <span th:text="${#strings.toUpperCase(#strings.substring(email.sender, 0, 1))}">?</span>
+                </div>
+                <span class="sender-email" th:text="${email.sender}">sender@example.com</span>
+            </div>
+        </td>
+        <td>
+            <span class="recipient-text" th:text="${email.owner}">recipient@example.com</span>
+        </td>
+        <td>
+            <span class="subject-text" th:text="${email.getSubjectSummary(40)}">(无主题)</span>
+            <span th:if="${!email.isRead}" class="unread-badge">未读</span>
+        </td>
+        <td>
+            <span class="size-text" th:text="${email.formattedSize}">0 KB</span>
+        </td>
+        <td>
+            <span class="time-text" th:text="${#temporals.format(email.receivedAt, 'MM-dd HH:mm')}">00:00</span>
+        </td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-icon btn-ghost" 
+                        title="查看详情"
+                        th:hx-get="@{/emails/{id}/modal(id=${email.id})}"
+                        hx-target="#modal-container"
+                        hx-swap="innerHTML">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+                <button th:if="${email.isRead}" 
+                        class="btn btn-icon btn-ghost"
+                        title="标记为未读"
+                        th:hx-post="@{/emails/{id}/unread(id=${email.id})}"
+                        th:hx-target="${'#email-' + email.id}"
+                        hx-swap="outerHTML">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button th:unless="${email.isRead}" 
+                        class="btn btn-icon btn-ghost"
+                        title="标记为已读"
+                        th:hx-post="@{/emails/{id}/read(id=${email.id})}"
+                        th:hx-target="${'#email-' + email.id}"
+                        hx-swap="outerHTML">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                </button>
+                <button class="btn btn-icon btn-ghost btn-danger"
+                        title="删除"
+                        th:hx-post="@{/emails/{id}/delete(id=${email.id})}"
+                        th:hx-target="${'#email-' + email.id}"
+                        hx-swap="outerHTML"
+                        hx-confirm="确定要删除这封邮件吗？">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+            </div>
+        </td>
+    </th:block>
+</body>
+</html>
+

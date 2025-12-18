@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 用户表格行 -->
+    <th:block th:fragment="user-row">
+        <tr th:id="${'user-' + user.id}">
+            <th:block th:replace="~{:: user-row-content(${user})}"/>
+        </tr>
+    </th:block>
+
+    <th:block th:fragment="user-row-content(user)">
+        <td>
+            <div class="user-info-cell">
+                <div class="user-avatar">
+                    <span th:text="${#strings.toUpperCase(#strings.substring(user.username, 0, 1))}">U</span>
+                </div>
+                <div class="user-details">
+                    <span class="user-email" th:text="${user.email}">user@example.com</span>
+                    <span class="user-name" th:text="${user.username}">username</span>
+                </div>
+            </div>
+        </td>
+        <td>
+            <span class="badge badge-info" th:text="${user.domain}">example.com</span>
+        </td>
+        <td>
+            <div class="quota-cell">
+                <div class="quota-bar">
+                    <div class="quota-fill" 
+                         th:style="'width: ' + ${user.usedPercentage} + '%'"
+                         th:classappend="${user.usedPercentage > 90} ? 'danger' : (${user.usedPercentage > 70} ? 'warning' : '')"></div>
+                </div>
+                <span class="quota-text">
+                    <th:block th:text="${user.formattedUsed}">0 B</th:block> / 
+                    <th:block th:text="${user.formattedQuota}">1 GB</th:block>
+                </span>
+            </div>
+        </td>
+        <td>
+            <span class="status-dot" th:classappend="${user.isEnabled} ? 'status-active' : 'status-inactive'"></span>
+            <span th:text="${user.isEnabled} ? '已启用' : '已禁用'">状态</span>
+        </td>
+        <td>
+            <span th:if="${user.lastLoginAt}" th:text="${#temporals.format(user.lastLoginAt, 'yyyy-MM-dd HH:mm')}">从未登录</span>
+            <span th:unless="${user.lastLoginAt}" class="text-muted">从未登录</span>
+        </td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn btn-icon btn-ghost" 
+                        title="编辑"
+                        th:hx-get="@{/users/{id}/edit/modal(id=${user.id})}"
+                        hx-target="#modal-container"
+                        hx-swap="innerHTML">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                </button>
+                <button class="btn btn-icon btn-ghost"
+                        title="重置密码"
+                        th:hx-get="@{/users/{id}/reset-password/modal(id=${user.id})}"
+                        hx-target="#modal-container"
+                        hx-swap="innerHTML">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </button>
+                <button class="btn btn-icon btn-ghost"
+                        th:title="${user.isEnabled} ? '禁用' : '启用'"
+                        th:hx-post="@{/users/{id}/toggle(id=${user.id})}"
+                        th:hx-target="${'#user-' + user.id}"
+                        hx-swap="outerHTML">
+                    <svg th:if="${user.isEnabled}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <svg th:unless="${user.isEnabled}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                </button>
+                <button class="btn btn-icon btn-ghost btn-danger"
+                        title="删除"
+                        th:hx-delete="@{/users/{id}(id=${user.id})}"
+                        th:hx-target="${'#user-' + user.id}"
+                        hx-swap="outerHTML"
+                        hx-confirm="确定要删除用户吗？该操作不可恢复！">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+            </div>
+        </td>
+    </th:block>
+</body>
+</html>
+

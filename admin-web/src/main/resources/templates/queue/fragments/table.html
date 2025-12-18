@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 队列表格 -->
+    <div th:fragment="queue-table" class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>收件人</th>
+                    <th>状态</th>
+                    <th>重试次数</th>
+                    <th>下次重试</th>
+                    <th>错误信息</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${queue.isEmpty()}">
+                    <td colspan="7" class="empty-cell">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"/>
+                                <line x1="8" y1="12" x2="21" y2="12"/>
+                                <line x1="8" y1="18" x2="21" y2="18"/>
+                            </svg>
+                            <p>队列为空</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="item : ${queue}" th:id="${'queue-' + item.id}">
+                    <th:block th:replace="~{queue/fragments/table-row :: queue-row-content(${item})}"/>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 分页 -->
+        <div th:if="${!queue.isEmpty()}" class="pagination">
+            <span class="page-info">
+                共 <th:block th:text="${queue.totalElements}">0</th:block> 条记录，
+                第 <th:block th:text="${queue.number + 1}">1</th:block> / <th:block th:text="${queue.totalPages}">1</th:block> 页
+            </span>
+            <div class="page-buttons">
+                <button th:disabled="${queue.isFirst()}" 
+                        hx-get="/queue/table"
+                        th:hx-vals="'page=' + ${queue.number - 1} + '&status=' + ${selectedStatus}"
+                        hx-target="#queue-table-container"
+                        class="btn btn-sm">上一页</button>
+                <button th:disabled="${queue.isLast()}"
+                        hx-get="/queue/table"
+                        th:hx-vals="'page=' + ${queue.number + 1} + '&status=' + ${selectedStatus}"
+                        hx-target="#queue-table-container"
+                        class="btn btn-sm">下一页</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

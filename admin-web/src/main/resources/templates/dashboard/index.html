@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>仪表板</title>
+</head>
+<body>
+    <th:block layout:fragment="breadcrumb">
+        <span>仪表板</span>
+    </th:block>
+
+    <div layout:fragment="content" class="dashboard">
+        <!-- 统计卡片 -->
+        <section class="stats-section" th:fragment="stats-cards" id="stats-cards"
+                 hx-get="/stats/refresh" hx-trigger="every 30s" hx-swap="outerHTML">
+            <div class="stats-grid">
+                <!-- 域名统计 -->
+                <div class="stat-card domains">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" th:text="${stats.totalDomains}">0</span>
+                        <span class="stat-label">域名总数</span>
+                        <span class="stat-sub">
+                            <span class="highlight" th:text="${stats.enabledDomains}">0</span> 个已启用
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 用户统计 -->
+                <div class="stat-card users">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" th:text="${stats.totalUsers}">0</span>
+                        <span class="stat-label">用户总数</span>
+                        <span class="stat-sub">
+                            <span class="highlight" th:text="${stats.enabledUsers}">0</span> 个活跃
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 邮件统计 -->
+                <div class="stat-card emails">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" th:text="${stats.totalEmails}">0</span>
+                        <span class="stat-label">邮件总数</span>
+                        <span class="stat-sub">
+                            <span class="highlight" th:text="${stats.unreadEmails}">0</span> 封未读
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 今日统计 -->
+                <div class="stat-card today">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" th:text="${stats.todayEmails}">0</span>
+                        <span class="stat-label">今日邮件</span>
+                        <span class="stat-sub">
+                            <span class="success" th:text="${stats.todayDelivered}">0</span> 已送达
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 存储使用 & 队列状态 -->
+        <section class="info-panels">
+            <!-- 存储使用 -->
+            <div class="panel storage-panel">
+                <h3>存储使用</h3>
+                <div class="storage-chart">
+                    <div class="storage-ring" 
+                         th:style="'--percent: ' + ${stats.storageUsagePercent}">
+                        <div class="storage-center">
+                            <span class="storage-percent" th:text="${#numbers.formatDecimal(stats.storageUsagePercent, 0, 1)} + '%'">0%</span>
+                        </div>
+                    </div>
+                    <div class="storage-details">
+                        <div class="storage-item">
+                            <span class="label">已使用</span>
+                            <span class="value" th:text="${stats.formattedUsedStorage}">0 B</span>
+                        </div>
+                        <div class="storage-item">
+                            <span class="label">总配额</span>
+                            <span class="value" th:text="${stats.formattedTotalStorage}">0 B</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 队列状态 -->
+            <div class="panel queue-panel">
+                <h3>发送队列</h3>
+                <div class="queue-stats">
+                    <div class="queue-item pending">
+                        <span class="queue-count" th:text="${stats.pendingQueue}">0</span>
+                        <span class="queue-label">等待发送</span>
+                    </div>
+                    <div class="queue-item sent">
+                        <span class="queue-count" th:text="${stats.sentQueue}">0</span>
+                        <span class="queue-label">已发送</span>
+                    </div>
+                    <div class="queue-item failed">
+                        <span class="queue-count" th:text="${stats.failedQueue}">0</span>
+                        <span class="queue-label">发送失败</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 投递状态 -->
+            <div class="panel delivery-panel">
+                <h3>投递统计</h3>
+                <div class="delivery-stats">
+                    <div class="delivery-item delivered">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span class="delivery-count" th:text="${stats.deliveredCount}">0</span>
+                        <span class="delivery-label">已送达</span>
+                    </div>
+                    <div class="delivery-item bounced">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        <span class="delivery-count" th:text="${stats.bouncedCount}">0</span>
+                        <span class="delivery-label">退回</span>
+                    </div>
+                    <div class="delivery-item deferred">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span class="delivery-count" th:text="${stats.deferredCount}">0</span>
+                        <span class="delivery-label">延迟</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最近邮件 & 排行榜 -->
+        <section class="data-panels">
+            <!-- 最近邮件 -->
+            <div class="panel recent-emails-panel" th:fragment="recent-emails" id="recent-emails"
+                 hx-get="/emails/recent" hx-trigger="every 60s" hx-swap="outerHTML">
+                <div class="panel-header">
+                    <h3>最近邮件</h3>
+                    <a th:href="@{/emails}" class="view-all">查看全部 →</a>
+                </div>
+                <div class="email-list">
+                    <div th:if="${#lists.isEmpty(recentEmails)}" class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <p>暂无邮件</p>
+                    </div>
+                    <div th:each="email : ${recentEmails}" class="email-item" 
+                         th:classappend="${!email.isRead} ? 'unread' : ''">
+                        <div class="email-avatar">
+                            <span th:text="${#strings.toUpperCase(#strings.substring(email.sender, 0, 1))}">?</span>
+                        </div>
+                        <div class="email-content">
+                            <div class="email-header">
+                                <span class="email-sender" th:text="${email.sender}">sender@example.com</span>
+                                <span class="email-time" th:text="${#temporals.format(email.receivedAt, 'MM-dd HH:mm')}">00:00</span>
+                            </div>
+                            <div class="email-subject" th:text="${email.getSubjectSummary(50)}">(无主题)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 排行榜 -->
+            <div class="panel rankings-panel">
+                <div class="panel-header">
+                    <h3>存储排行</h3>
+                </div>
+                <div class="ranking-list">
+                    <div th:if="${#lists.isEmpty(stats.topStorageUsers)}" class="empty-state">
+                        <p>暂无数据</p>
+                    </div>
+                    <div th:each="user, iterStat : ${stats.topStorageUsers}" class="ranking-item">
+                        <span class="rank" th:text="${iterStat.index + 1}">1</span>
+                        <div class="ranking-info">
+                            <span class="ranking-name" th:text="${user.email}">user@example.com</span>
+                            <div class="ranking-bar">
+                                <div class="ranking-fill" th:style="'width: ' + ${user.percent} + '%'"></div>
+                            </div>
+                        </div>
+                        <span class="ranking-value" th:text="${user.used}">0 B</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 成功提示 Toast -->
+    <div th:fragment="success-toast" class="toast toast-success" id="success-toast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="16 10 11 15 8 12"/>
+        </svg>
+        <span th:text="${success}">操作成功</span>
+        <button onclick="this.parentElement.remove()">×</button>
+    </div>
+    
+    <script>
+        // 自动移除 Toast
+        setTimeout(function() {
+            var toast = document.getElementById('success-toast');
+            if (toast) toast.remove();
+        }, 3000);
+    </script>
+</body>
+</html>
+

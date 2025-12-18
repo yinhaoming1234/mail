@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 日志表格 -->
+    <div th:fragment="log-table" class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>收件人</th>
+                    <th>状态</th>
+                    <th>远程主机</th>
+                    <th>SMTP 代码</th>
+                    <th>响应</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${logs.isEmpty()}">
+                    <td colspan="7" class="empty-cell">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <p>暂无日志</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="log : ${logs}" th:id="${'log-' + log.id}">
+                    <td th:text="${log.recipient}">recipient@example.com</td>
+                    <td>
+                        <span class="badge" th:classappend="${log.statusClass}" th:text="${log.statusText}">状态</span>
+                    </td>
+                    <td th:text="${log.remoteHost ?: '-'}">-</td>
+                    <td th:text="${log.smtpCode ?: '-'}">-</td>
+                    <td>
+                        <span th:if="${log.smtpResponse}" 
+                              class="response-text" 
+                              th:text="${#strings.abbreviate(log.smtpResponse, 40)}"
+                              th:title="${log.smtpResponse}">响应</span>
+                        <span th:unless="${log.smtpResponse}" class="text-muted">-</span>
+                    </td>
+                    <td th:text="${#temporals.format(log.createdAt, 'MM-dd HH:mm:ss')}">00:00:00</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-icon btn-ghost" 
+                                    title="查看详情"
+                                    th:hx-get="@{/logs/{id}(id=${log.id})}"
+                                    hx-target="#modal-container"
+                                    hx-swap="innerHTML">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 分页 -->
+        <div th:if="${!logs.isEmpty()}" class="pagination">
+            <span class="page-info">
+                共 <th:block th:text="${logs.totalElements}">0</th:block> 条记录，
+                第 <th:block th:text="${logs.number + 1}">1</th:block> / <th:block th:text="${logs.totalPages}">1</th:block> 页
+            </span>
+            <div class="page-buttons">
+                <button th:disabled="${logs.isFirst()}" 
+                        hx-get="/logs/table"
+                        th:hx-vals="'page=' + ${logs.number - 1} + '&status=' + ${selectedStatus} + '&search=' + ${search}"
+                        hx-target="#log-table-container"
+                        class="btn btn-sm">上一页</button>
+                <button th:disabled="${logs.isLast()}"
+                        hx-get="/logs/table"
+                        th:hx-vals="'page=' + ${logs.number + 1} + '&status=' + ${selectedStatus} + '&search=' + ${search}"
+                        hx-target="#log-table-container"
+                        class="btn btn-sm">下一页</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- 域名表格 -->
+    <div th:fragment="domain-table" class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>域名</th>
+                    <th>描述</th>
+                    <th>类型</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${domains.isEmpty()}">
+                    <td colspan="6" class="empty-cell">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                            </svg>
+                            <p>暂无域名</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="domain : ${domains}" th:id="${'domain-' + domain.id}">
+                    <th:block th:replace="~{domains/fragments/table-row :: domain-row-content(${domain})}"/>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 分页 -->
+        <div th:if="${!domains.isEmpty()}" class="pagination">
+            <span class="page-info">
+                共 <th:block th:text="${domains.totalElements}">0</th:block> 条记录，
+                第 <th:block th:text="${domains.number + 1}">1</th:block> / <th:block th:text="${domains.totalPages}">1</th:block> 页
+            </span>
+            <div class="page-buttons">
+                <button th:disabled="${domains.isFirst()}" 
+                        hx-get="/domains/table"
+                        th:hx-vals="'page=' + ${domains.number - 1} + '&search=' + ${search}"
+                        hx-target="#domain-table-container"
+                        class="btn btn-sm">上一页</button>
+                <button th:disabled="${domains.isLast()}"
+                        hx-get="/domains/table"
+                        th:hx-vals="'page=' + ${domains.number + 1} + '&search=' + ${search}"
+                        hx-target="#domain-table-container"
+                        class="btn btn-sm">下一页</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

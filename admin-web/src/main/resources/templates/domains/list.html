@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>域名管理</title>
+</head>
+<body>
+    <th:block layout:fragment="breadcrumb">
+        <a th:href="@{/}">首页</a>
+        <span class="separator">/</span>
+        <span>域名管理</span>
+    </th:block>
+
+    <div layout:fragment="content" class="page-domains">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <h1>域名管理</h1>
+            <button class="btn btn-primary" 
+                    hx-get="/domains/new/modal" 
+                    hx-target="#modal-container"
+                    hx-swap="innerHTML">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                添加域名
+            </button>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <div class="search-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" 
+                       name="search" 
+                       placeholder="搜索域名..." 
+                       th:value="${search}"
+                       hx-get="/domains/table"
+                       hx-target="#domain-table-container"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-include="[name='search']">
+            </div>
+        </div>
+
+        <!-- 提示消息 -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- 表格区域 -->
+        <div id="domain-table-container">
+            <th:block th:replace="~{domains/fragments/table :: domain-table}"/>
+        </div>
+    </div>
+</body>
+</html>
+
