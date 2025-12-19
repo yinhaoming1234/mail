@@ -18,7 +18,10 @@ data class Email(
     val size: Int,
     val isRead: Boolean = false,
     val isDeleted: Boolean = false,
-    val receivedDate: Long = System.currentTimeMillis()
+    val receivedDate: Long = System.currentTimeMillis(),
+    val mailboxType: String = "INBOX", // INBOX, SENT, DRAFT
+    val isStarred: Boolean = false,
+    val isDraft: Boolean = false
 )
 
 @Entity(tableName = "accounts")

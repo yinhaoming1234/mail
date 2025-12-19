@@ -10,6 +10,15 @@ interface EmailDao {
     @Query("SELECT * FROM emails WHERE accountId = :accountId AND isDeleted = 0 ORDER BY date DESC")
     fun getEmailsByAccount(accountId: Long): Flow<List<Email>>
     
+    @Query("SELECT * FROM emails WHERE accountId = :accountId AND mailboxType = :mailboxType AND isDeleted = 0 ORDER BY date DESC")
+    fun getEmailsByMailboxType(accountId: Long, mailboxType: String): Flow<List<Email>>
+    
+    @Query("SELECT * FROM emails WHERE accountId = :accountId AND isStarred = 1 AND isDeleted = 0 ORDER BY date DESC")
+    fun getStarredEmails(accountId: Long): Flow<List<Email>>
+    
+    @Query("SELECT * FROM emails WHERE accountId = :accountId AND isDraft = 1 AND isDeleted = 0 ORDER BY date DESC")
+    fun getDraftEmails(accountId: Long): Flow<List<Email>>
+    
     @Query("SELECT * FROM emails WHERE uid = :uid")
     suspend fun getEmailByUid(uid: String): Email?
     
@@ -25,8 +34,14 @@ interface EmailDao {
     @Query("UPDATE emails SET isRead = :isRead WHERE uid = :uid")
     suspend fun markAsRead(uid: String, isRead: Boolean)
     
+    @Query("UPDATE emails SET isStarred = :isStarred WHERE uid = :uid")
+    suspend fun toggleStarred(uid: String, isStarred: Boolean)
+    
     @Query("UPDATE emails SET isDeleted = 1 WHERE uid = :uid")
     suspend fun markAsDeleted(uid: String)
+    
+    @Query("DELETE FROM emails WHERE uid = :uid")
+    suspend fun deleteDraft(uid: String)
     
     @Query("DELETE FROM emails WHERE accountId = :accountId")
     suspend fun deleteEmailsByAccount(accountId: Long)

@@ -109,8 +109,8 @@ fun MailClientApp() {
                 onSettingsClick = {
                     navController.navigate(Screen.Settings.route)
                 },
-                onComposeClick = {
-                    navController.navigate(Screen.ComposeEmail.route)
+                onComposeClick = { draftId ->
+                    navController.navigate(Screen.ComposeEmail.createRoute(draftId))
                 }
             )
         }
@@ -148,12 +148,26 @@ fun MailClientApp() {
         }
         
         // Compose Email Screen
-        composable(Screen.ComposeEmail.route) {
+        composable(
+            route = Screen.ComposeEmail.route,
+            arguments = listOf(
+                navArgument("draftId") { 
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val draftId = backStackEntry.arguments?.getString("draftId")
+            val emails by viewModel.emails.collectAsState()
+            val draftEmail = draftId?.let { id -> emails.find { it.uid == id } }
+            
             ComposeEmailScreen(
                 viewModel = viewModel,
                 onNavigateBack = {
                     navController.popBackStack()
-                }
+                },
+                draftEmail = draftEmail
             )
         }
         

@@ -7,6 +7,7 @@ import androidx.room.Room
 import com.yhm.mail_client.data.local.AppDatabase
 import com.yhm.mail_client.data.model.Email
 import com.yhm.mail_client.data.model.EmailAccount
+import com.yhm.mail_client.data.model.MailboxType
 import com.yhm.mail_client.data.repository.EmailRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ class EmailViewModel(application: Application) : AndroidViewModel(application) {
         application,
         AppDatabase::class.java,
         "mail_database"
-    ).addMigrations(AppDatabase.MIGRATION_1_2).build()
+    ).addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3).build()
     
     private val repository = EmailRepository(
         emailDao = database.emailDao(),
@@ -32,16 +33,28 @@ class EmailViewModel(application: Application) : AndroidViewModel(application) {
     private val _currentAccount = MutableStateFlow<EmailAccount?>(null)
     val currentAccount: StateFlow<EmailAccount?> = _currentAccount.asStateFlow()
     
-    // Emails for current account
-    val emails: StateFlow<List<Email>> = currentAccount
-        .flatMapLatest { account ->
-            if (account != null) {
-                repository.getEmailsByAccount(account.id)
-            } else {
-                flowOf(emptyList())
+    // Current mailbox type
+    private val _currentMailboxType = MutableStateFlow(MailboxType.INBOX)
+    val currentMailboxType: StateFlow<MailboxType> = _currentMailboxType.asStateFlow()
+    
+    // Emails for current account and mailbox
+    val emails: StateFlow<List<Email>> = combine(
+        currentAccount,
+        currentMailboxType
+    ) { account, mailboxType ->
+        Pair(account, mailboxType)
+    }.flatMapLatest { (account, mailboxType) ->
+        if (account != null) {
+            when (mailboxType) {
+                MailboxType.INBOX -> repository.getEmailsByMailboxType(account.id, "INBOX")
+                MailboxType.SENT -> repository.getEmailsByMailboxType(account.id, "SENT")
+                MailboxType.DRAFT -> repository.getDraftEmails(account.id)
+                MailboxType.STARRED -> repository.getStarredEmails(account.id)
             }
+        } else {
+            flowOf(emptyList())
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     
     // All accounts
     val accounts: StateFlow<List<EmailAccount>> = repository.getAllAccounts()
@@ -174,7 +187,55 @@ class EmailViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.update { it.copy(accountSaved = false) }
     }
     
-    fun sendEmail(to: String, subject: String, body: String) {
+    fun selectMailbox(mailboxType: MailboxType) {
+        _currentMailboxType.value = mailboxType
+    }
+    
+    fun toggleStarred(uid: String, currentStarred: Boolean) {
+        viewModelScope.launch {
+            repository.toggleStarred(uid, !currentStarred)
+        }
+    }
+    
+    fun saveDraft(to: String, subject: String, body: String, existingDraftUid: String? = null) {
+        viewModelScope.launch {
+            val account = _currentAccount.value ?: return@launch
+            
+            try {
+                val draftEmail = Email(
+                    uid = existingDraftUid ?: "draft-${System.currentTimeMillis()}-${account.id}",
+                    accountId = account.id,
+                    messageNumber = 0,
+                    from = account.email,
+                    to = to,
+                    subject = subject,
+                    date = System.currentTimeMillis(),
+                    content = body,
+                    contentType = "text/plain",
+                    size = body.length,
+                    isRead = true,
+                    isDeleted = false,
+                    receivedDate = System.currentTimeMillis(),
+                    mailboxType = "DRAFT",
+                    isStarred = false,
+                    isDraft = true
+                )
+                
+                repository.saveDraft(draftEmail)
+                _uiState.update { it.copy(draftSaved = true) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+    
+    fun deleteDraft(uid: String) {
+        viewModelScope.launch {
+            repository.deleteDraft(uid)
+        }
+    }
+    
+    fun sendEmail(to: String, subject: String, body: String, draftUid: String? = null) {
         viewModelScope.launch {
             val account = _currentAccount.value ?: return@launch
             _uiState.update { it.copy(isSending = true, error = null, sendSuccess = false) }
@@ -191,7 +252,8 @@ class EmailViewModel(application: Application) : AndroidViewModel(application) {
                     from = account.email,
                     to = recipients,
                     subject = subject,
-                    body = body
+                    body = body,
+                    draftUid = draftUid
                 )
                 
                 result.fold(
@@ -218,6 +280,10 @@ class EmailViewModel(application: Application) : AndroidViewModel(application) {
     fun clearSendSuccess() {
         _uiState.update { it.copy(sendSuccess = false) }
     }
+    
+    fun clearDraftSaved() {
+        _uiState.update { it.copy(draftSaved = false) }
+    }
 }
 
 data class EmailUiState(
@@ -228,5 +294,6 @@ data class EmailUiState(
     val testResult: String? = null,
     val syncMessage: String? = null,
     val accountSaved: Boolean = false,
-    val sendSuccess: Boolean = false
+    val sendSuccess: Boolean = false,
+    val draftSaved: Boolean = false
 )

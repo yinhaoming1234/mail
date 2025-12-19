@@ -7,6 +7,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -60,6 +62,26 @@ fun MailDetailScreen(
                     }
                 },
                 actions = {
+                    // Star button
+                    email?.let { currentEmail ->
+                        IconButton(onClick = {
+                            viewModel.toggleStarred(currentEmail.uid, currentEmail.isStarred)
+                        }) {
+                            Icon(
+                                imageVector = if (currentEmail.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
+                                contentDescription = if (currentEmail.isStarred)
+                                    stringResource(R.string.unstar)
+                                else
+                                    stringResource(R.string.star),
+                                tint = if (currentEmail.isStarred)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+                    
+                    // Delete button
                     IconButton(onClick = {
                         email?.let { viewModel.deleteEmail(it) }
                         onBackClick()

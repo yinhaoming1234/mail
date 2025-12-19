@@ -57,4 +57,26 @@
     <string name="sending">发送中...</string>
     <string name="send_success">邮件发送成功</string>
     <string name="send_failed">发送失败</string>
+    
+    <!-- 邮箱类型 -->
+    <string name="mailbox_inbox">收件箱</string>
+    <string name="mailbox_sent">已发送</string>
+    <string name="mailbox_drafts">草稿箱</string>
+    <string name="mailbox_starred">星标邮件</string>
+    
+    <!-- 草稿功能 -->
+    <string name="save_draft">保存草稿</string>
+    <string name="draft_saved">草稿已保存</string>
+    <string name="load_draft">加载草稿</string>
+    <string name="discard_draft">放弃草稿</string>
+    <string name="delete_draft">删除草稿</string>
+    
+    <!-- 星标功能 -->
+    <string name="star">加星标</string>
+    <string name="unstar">取消星标</string>
+    <string name="starred">已加星标</string>
+    
+    <!-- 导航 -->
+    <string name="open_drawer">打开导航菜单</string>
+    <string name="close_drawer">关闭导航菜单</string>
 </resources>

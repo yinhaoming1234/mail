@@ -56,14 +56,38 @@ class EmailRepository(
     fun getEmailsByAccount(accountId: Long): Flow<List<Email>> = 
         emailDao.getEmailsByAccount(accountId)
     
+    fun getEmailsByMailboxType(accountId: Long, mailboxType: String): Flow<List<Email>> =
+        emailDao.getEmailsByMailboxType(accountId, mailboxType)
+    
+    fun getStarredEmails(accountId: Long): Flow<List<Email>> =
+        emailDao.getStarredEmails(accountId)
+    
+    fun getDraftEmails(accountId: Long): Flow<List<Email>> =
+        emailDao.getDraftEmails(accountId)
+    
     suspend fun getEmailByUid(uid: String): Email? = emailDao.getEmailByUid(uid)
     
     suspend fun markAsRead(uid: String, isRead: Boolean = true) {
         emailDao.markAsRead(uid, isRead)
     }
     
+    suspend fun toggleStarred(uid: String, isStarred: Boolean) {
+        emailDao.toggleStarred(uid, isStarred)
+    }
+    
     suspend fun markAsDeleted(uid: String) {
         emailDao.markAsDeleted(uid)
+    }
+    
+    suspend fun saveDraft(email: Email) {
+        emailDao.insertEmail(email.copy(
+            isDraft = true,
+            mailboxType = "DRAFT"
+        ))
+    }
+    
+    suspend fun deleteDraft(uid: String) {
+        emailDao.deleteDraft(uid)
     }
     
     // POP3 operations
@@ -157,13 +181,41 @@ class EmailRepository(
         from: String,
         to: List<String>,
         subject: String,
-        body: String
+        body: String,
+        draftUid: String? = null
     ): Result<Unit> {
         val client = SmtpClient(account)
         return try {
             Log.d(TAG, "Sending email from $from to $to")
             client.sendEmail(from, to, subject, body).getOrThrow()
             Log.d(TAG, "Email sent successfully")
+            
+            // Delete draft if this was sent from a draft
+            if (draftUid != null) {
+                deleteDraft(draftUid)
+            }
+            
+            // Save to sent items
+            val sentEmail = Email(
+                uid = "sent-${System.currentTimeMillis()}-${from.hashCode()}",
+                accountId = account.id,
+                messageNumber = 0,
+                from = from,
+                to = to.joinToString(", "),
+                subject = subject,
+                date = System.currentTimeMillis(),
+                content = body,
+                contentType = "text/plain",
+                size = body.length,
+                isRead = true,
+                isDeleted = false,
+                receivedDate = System.currentTimeMillis(),
+                mailboxType = "SENT",
+                isStarred = false,
+                isDraft = false
+            )
+            emailDao.insertEmail(sentEmail)
+            
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to send email", e)

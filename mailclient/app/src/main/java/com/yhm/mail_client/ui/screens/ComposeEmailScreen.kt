@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,11 +19,13 @@ import com.yhm.mail_client.ui.viewmodel.EmailViewModel
 @Composable
 fun ComposeEmailScreen(
     viewModel: EmailViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    draftEmail: com.yhm.mail_client.data.model.Email? = null
 ) {
-    var recipients by remember { mutableStateOf("") }
-    var subject by remember { mutableStateOf("") }
-    var body by remember { mutableStateOf("") }
+    var recipients by remember { mutableStateOf(draftEmail?.to ?: "") }
+    var subject by remember { mutableStateOf(draftEmail?.subject ?: "") }
+    var body by remember { mutableStateOf(draftEmail?.content ?: "") }
+    val draftUid = remember { draftEmail?.uid }
     
     val uiState by viewModel.uiState.collectAsState()
     
@@ -31,6 +34,14 @@ fun ComposeEmailScreen(
         if (uiState.sendSuccess) {
             viewModel.clearSendSuccess()
             onNavigateBack()
+        }
+    }
+    
+    // Show draft saved message
+    LaunchedEffect(uiState.draftSaved) {
+        if (uiState.draftSaved) {
+            kotlinx.coroutines.delay(1500)
+            viewModel.clearDraftSaved()
         }
     }
     
@@ -47,12 +58,33 @@ fun ComposeEmailScreen(
                     }
                 },
                 actions = {
+                    // Save Draft button
+                    IconButton(
+                        onClick = {
+                            viewModel.saveDraft(
+                                to = recipients,
+                                subject = subject,
+                                body = body,
+                                existingDraftUid = draftUid
+                            )
+                        },
+                        enabled = !uiState.isSending && 
+                                 (recipients.isNotBlank() || subject.isNotBlank() || body.isNotBlank())
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Save,
+                            contentDescription = stringResource(R.string.save_draft)
+                        )
+                    }
+                    
+                    // Send button
                     IconButton(
                         onClick = {
                             viewModel.sendEmail(
                                 to = recipients,
                                 subject = subject,
-                                body = body
+                                body = body,
+                                draftUid = draftUid
                             )
                         },
                         enabled = !uiState.isSending && 
@@ -89,6 +121,23 @@ fun ComposeEmailScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Draft indicator
+            if (draftEmail != null) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.load_draft),
+                        modifier = Modifier.padding(12.dp),
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+            
             // Recipients
             OutlinedTextField(
                 value = recipients,
@@ -122,13 +171,14 @@ fun ComposeEmailScreen(
                 enabled = !uiState.isSending
             )
             
-            // Send Button (alternative to toolbar button)
+            // Send Button
             Button(
                 onClick = {
                     viewModel.sendEmail(
                         to = recipients,
                         subject = subject,
-                        body = body
+                        body = body,
+                        draftUid = draftUid
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -153,6 +203,23 @@ fun ComposeEmailScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(stringResource(R.string.send))
+                }
+            }
+            
+            // Draft saved message
+            if (uiState.draftSaved) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.draft_saved),
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
             

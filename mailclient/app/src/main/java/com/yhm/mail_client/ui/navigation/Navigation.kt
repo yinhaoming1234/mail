@@ -8,7 +8,13 @@ sealed class Screen(val route: String) {
     object MailDetail : Screen("mail_detail/{emailUid}") {
         fun createRoute(emailUid: String) = "mail_detail/$emailUid"
     }
-    object ComposeEmail : Screen("compose_email")
+    object ComposeEmail : Screen("compose_email?draftId={draftId}") {
+        fun createRoute(draftId: String? = null) = if (draftId != null) {
+            "compose_email?draftId=$draftId"
+        } else {
+            "compose_email"
+        }
+    }
     object Settings : Screen("settings")
     object ChangePassword : Screen("change_password")
     object Profile : Screen("profile")
