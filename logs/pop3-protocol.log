@@ -17,3 +17,9 @@
 05:32:07.886 [pop3-handler-3] USER: test@localhost
 05:32:07.900 [pop3-handler-3] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
 05:32:07.918 [pop3-handler-3] 用户 test@localhost 退出，删除了 0 封邮件
+07:33:28.550 [pop3-handler-0] USER: test@localhost
+07:33:28.565 [pop3-handler-0] 用户 test@localhost 登录成功，邮件数: 0, 总大小: 0
+07:33:28.592 [pop3-handler-0] 用户 test@localhost 退出，删除了 0 封邮件
+07:36:06.063 [pop3-handler-1] USER: admin@localhost
+07:36:06.112 [pop3-handler-1] 用户 admin@localhost 登录成功，邮件数: 5, 总大小: 996
+07:36:06.683 [pop3-handler-1] 用户 admin@localhost 退出，删除了 0 封邮件

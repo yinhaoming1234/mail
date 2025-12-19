@@ -5,8 +5,9 @@ package com.yhm.mail_client.data.network
  * 集中管理所有服务器地址配置
  */
 object ServerConfig {
-    // 服务器IP地址 - 真机调试时使用
-    const val SERVER_IP = "192.168.1.106"
+    // 服务器IP地址 - Android模拟器访问主机的特殊地址
+    // 10.0.2.2 在Android模拟器中映射到宿主机的localhost
+    const val SERVER_IP = "10.0.2.2"
     
     // 管理后台API地址
     const val API_BASE_URL = "http://$SERVER_IP:8000"

@@ -11,7 +11,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    服务器端 (192.168.1.106)                   │
+│                    服务器端 (localhost)                       │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
 │  │ SMTP Server │  │ POP3 Server │  │   Admin Web (8000)  │  │
@@ -122,7 +122,7 @@ mvn spring-boot:run
 
 ## 管理后台功能
 
-访问地址: `http://192.168.1.106:8000`
+访问地址: `http://localhost:8000` (服务器本地) 或 `http://10.0.2.2:8000` (Android模拟器)
 
 ### 用户管理
 
@@ -160,7 +160,8 @@ mvn spring-boot:run
 ```kotlin
 // mailclient/app/src/main/java/com/yhm/mail_client/data/network/ServerConfig.kt
 object ServerConfig {
-    const val SERVER_IP = "192.168.1.106"  // 修改为你的服务器IP
+    // Android模拟器使用10.0.2.2访问宿主机localhost
+    const val SERVER_IP = "10.0.2.2"
     const val API_BASE_URL = "http://$SERVER_IP:8000"
     const val SMTP_HOST = SERVER_IP
     const val SMTP_PORT = 2525
@@ -195,18 +196,18 @@ object ServerConfig {
 5. 确认新密码
 6. 点击"确认修改"
 
+### 模拟器调试配置（推荐）
+
+1. **使用Android模拟器**，SERVER_IP已配置为 `10.0.2.2`
+2. **10.0.2.2是Android模拟器访问宿主机localhost的特殊地址**
+3. **网络安全配置已允许10.0.2.2的明文流量**
+
 ### 真机调试配置
 
+如需使用真机调试：
 1. **确保手机和电脑在同一局域网**
-2. **修改ServerConfig.kt中的SERVER_IP为电脑IP**
-3. **网络安全配置已允许192.168.1.106的明文流量**
-
-网络安全配置文件：
-```xml
-<!-- mailclient/app/src/main/res/xml/network_security_config.xml -->
-<domain-config cleartextTrafficPermitted="true">
-    <domain includeSubdomains="false">192.168.1.106</domain>
-</domain-config>
+2. **修改ServerConfig.kt中的SERVER_IP为电脑局域网IP**（如192.168.1.106）
+3. **在网络安全配置中添加该IP地址**
 ```
 
 ## 功能说明
@@ -237,44 +238,50 @@ object ServerConfig {
 
 ## 网络配置
 
-### 模拟器访问本地服务器
+### 模拟器访问本地服务器（当前配置）
 
-如果使用 Android 模拟器:
+**服务器端配置**：
+- 所有服务器（SMTP、POP3、Admin-Web）均监听 `localhost` (127.0.0.1)
+- 数据库连接使用 `localhost:5432`
 
-1. **使用 10.0.2.2 代替 localhost**:
-   - Android 模拟器将 10.0.2.2 映射到宿主机的 localhost
-   - 配置时使用: `10.0.2.2:1100`
-
-2. 或者使用 adb 端口转发:
-   ```bash
-   adb forward tcp:1100 tcp:1100
-   ```
-   然后在应用中使用 `localhost:1100`
+**客户端配置**：
+- Android客户端使用 `10.0.2.2` 连接服务器
+- 10.0.2.2 是Android模拟器访问宿主机localhost的特殊地址
+- 无需修改任何配置，开箱即用
 
 ### 真机访问本地服务器
 
-如果使用真机测试:
+如需使用真机测试，需要进行以下配置：
 
-1. **确保手机和电脑在同一网络**
-2. **使用电脑的局域网 IP**:
+1. **获取电脑的局域网IP**：
    ```bash
    # Windows
    ipconfig
-   # 查找 IPv4 地址
+   # 查找 IPv4 地址，例如: 192.168.1.106
 
    # Linux/Mac
    ifconfig
    # 或 ip addr
    ```
-3. **配置服务器监听所有接口**:
-   编辑 `pop3-server/src/main/resources/application.properties`:
-   ```properties
-   pop3.domain=0.0.0.0
-   ```
-   重启服务器
 
-4. **在应用中使用局域网 IP**:
-   例如: `192.168.1.100:1100`
+2. **修改服务器配置监听所有接口**（可选）：
+   编辑服务器配置文件，将 `localhost` 改为 `0.0.0.0`
+   ```properties
+   # pop3-server/src/main/resources/application.properties
+   pop3.domain=0.0.0.0
+   
+   # smtp-server/src/main/resources/application.properties  
+   smtp.domain=0.0.0.0
+   ```
+
+3. **修改客户端配置**：
+   编辑 `ServerConfig.kt`，将 `SERVER_IP` 改为电脑的局域网IP
+   ```kotlin
+   const val SERVER_IP = "192.168.1.106"  // 改为你的电脑IP
+   ```
+
+4. **更新网络安全配置**：
+   在 `network_security_config.xml` 中添加你的局域网IP
 
 ## 安全注意事项
 

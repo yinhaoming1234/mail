@@ -42,7 +42,7 @@ public class DashboardController {
     public String refreshStats(Model model) {
         var stats = dashboardService.getDashboardStats();
         model.addAttribute("stats", stats);
-        return "dashboard/fragments/stats-cards :: stats-cards";
+        return "dashboard/index :: stats-cards";
     }
 
     /**
@@ -53,7 +53,7 @@ public class DashboardController {
     public String refreshRecentEmails(Model model) {
         var recentEmails = emailService.findRecentEmails(10);
         model.addAttribute("recentEmails", recentEmails);
-        return "dashboard/fragments/recent-emails :: recent-emails";
+        return "dashboard/index :: recent-emails";
     }
 }
 

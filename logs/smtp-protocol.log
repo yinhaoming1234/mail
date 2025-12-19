@@ -58,3 +58,27 @@
 05:15:40.523 [smtp-handler-0] 开始接收邮件数据
 05:15:40.588 [smtp-handler-0] 邮件已保存: from=test@localhost, to=[admin@localhost], subject=1111
 05:15:40.602 [smtp-handler-0] 客户端断开连接: /127.0.0.1:59220
+07:32:43.539 [smtp-handler-0] EHLO from localhost (/127.0.0.1:61656)
+07:32:43.579 [smtp-handler-0] MAIL FROM: <test@localhost>
+07:32:43.636 [smtp-handler-0] RCPT TO: <admin@localhost>
+07:32:43.656 [smtp-handler-0] 开始接收邮件数据
+07:32:43.765 [smtp-handler-0] 邮件已保存: from=test@localhost, to=[admin@localhost], subject=111
+07:32:43.785 [smtp-handler-0] 客户端断开连接: /127.0.0.1:61656
+07:36:38.311 [smtp-handler-1] EHLO from localhost (/127.0.0.1:57994)
+07:36:38.364 [smtp-handler-1] MAIL FROM: <admin@localhost>
+07:36:38.414 [smtp-handler-1] RCPT TO: <test@localhost>
+07:36:38.435 [smtp-handler-1] 开始接收邮件数据
+07:36:38.472 [smtp-handler-1] 邮件已保存: from=admin@localhost, to=[test@localhost], subject=1111111
+07:36:38.493 [smtp-handler-1] 客户端断开连接: /127.0.0.1:57994
+08:07:52.463 [smtp-handler-2] EHLO from localhost (/127.0.0.1:59903)
+08:07:52.508 [smtp-handler-2] MAIL FROM: <admin@localhost>
+08:07:52.544 [smtp-handler-2] RCPT TO: <test@localhost>
+08:07:52.579 [smtp-handler-2] 开始接收邮件数据
+08:07:52.631 [smtp-handler-2] 邮件已保存: from=admin@localhost, to=[test@localhost], subject=111
+08:07:52.655 [smtp-handler-2] 客户端断开连接: /127.0.0.1:59903
+08:22:46.289 [smtp-handler-3] EHLO from localhost (/127.0.0.1:59911)
+08:22:46.366 [smtp-handler-3] MAIL FROM: <admin@localhost>
+08:22:46.568 [smtp-handler-3] RCPT TO: <test@localhost>
+08:22:46.668 [smtp-handler-3] 开始接收邮件数据
+08:22:46.728 [smtp-handler-3] 邮件已保存: from=admin@localhost, to=[test@localhost], subject=111
+08:22:46.748 [smtp-handler-3] 客户端断开连接: /127.0.0.1:59911

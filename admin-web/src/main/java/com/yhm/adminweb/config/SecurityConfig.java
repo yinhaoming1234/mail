@@ -65,10 +65,8 @@ public class SecurityConfig {
                 .maximumSessions(1)
                 .expiredUrl("/login?expired=true")
             )
-            // CSRF 配置 (保持启用，但对 HTMX 请求放行)
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/actuator/**")
-            );
+            // 完全禁用 CSRF 保护
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
