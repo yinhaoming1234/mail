@@ -147,16 +147,16 @@ fun MailListScreen(
             },
             floatingActionButton = {
                 if (currentAccount != null && currentMailbox != MailboxType.SENT) {
-                FloatingActionButton(
-                    onClick = { onComposeClick(null) },
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.compose_email)
-                    )
+                    FloatingActionButton(
+                        onClick = { onComposeClick(null) },
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.compose_email)
+                        )
+                    }
                 }
-            }    }
             }
         ) { padding ->
             Box(

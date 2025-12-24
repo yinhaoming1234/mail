@@ -422,3 +422,350 @@
 2025-12-19 08:39:54.516 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown completed.
 2025-12-19 08:39:54.516 [virtual-41] INFO  com.yhm.pop3.db.DatabaseConfig - 数据库连接池已关闭
 2025-12-19 08:39:54.516 [virtual-41] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已停止
+2025-12-19 09:23:22.355 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 09:23:22.357 [main] INFO  com.yhm.pop3.Pop3ServerMain -        POP3 Server - Java 25 Edition     
+2025-12-19 09:23:22.358 [main] INFO  com.yhm.pop3.Pop3ServerMain - ==========================================
+2025-12-19 09:23:22.358 [main] INFO  com.yhm.pop3.Pop3ServerMain - Java 版本: 25
+2025-12-19 09:23:22.361 [main] INFO  com.yhm.pop3.Pop3ServerMain - 虚拟线程支持: 已启用
+2025-12-19 09:23:22.362 [main] INFO  com.yhm.pop3.Pop3ServerMain - 预览特性: 已启用
+2025-12-19 09:23:22.375 [main] INFO  com.yhm.pop3.server.Pop3Server - 正在启动 POP3 服务器...
+2025-12-19 09:23:22.376 [main] INFO  com.yhm.pop3.server.Pop3Server - 配置: Pop3ServerConfig{domain='localhost', port=1100, maxConnections=500, connectionTimeout=60000, readTimeout=600000, requireAuth=true, authFailedMaxAttempts=3, autoLogoutTimeout=600000}
+2025-12-19 09:23:22.384 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 初始化数据库...
+2025-12-19 09:23:22.388 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 已加载配置文件 application.properties
+2025-12-19 09:23:22.405 [main] INFO  com.yhm.pop3.db.DatabaseConfig - 初始化数据库连接池: jdbc:postgresql://localhost:5432/maildb
+2025-12-19 09:23:22.428 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Starting...
+2025-12-19 09:23:22.769 [main] INFO  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Added connection org.postgresql.jdbc.PgConnection@1b6e1eff
+2025-12-19 09:23:22.772 [main] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Start completed.
+2025-12-19 09:23:22.782 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_received_at ON emails(received_at DESC)
+2025-12-19 09:23:22.785 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_is_deleted ON emails(is_deleted)
+2025-12-19 09:23:22.789 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_emails_owner_deleted ON emails(owner, is_deleted)
+2025-12-19 09:23:22.791 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: CREATE INDEX IF NOT EXISTS idx_users_domain ON users(domain)
+2025-12-19 09:23:22.799 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO mail_domains (domain, description, is_local, is_enabled) VALUES ('example.com', 'Example...
+2025-12-19 09:23:22.802 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('admin@localhost', 'admin', 'admi...
+2025-12-19 09:23:22.804 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 执行 SQL: INSERT INTO users (email, username, password_hash, domain) VALUES ('user@example.com', 'user', 'user...
+2025-12-19 09:23:22.824 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_users_updated_at" for relation "users" already exists
+2025-12-19 09:23:22.827 [main] DEBUG com.yhm.pop3.db.DatabaseInitializer - 忽略 SQL 错误: ERROR: trigger "update_mail_domains_updated_at" for relation "mail_domains" already exists
+2025-12-19 09:23:22.827 [main] INFO  com.yhm.pop3.db.DatabaseInitializer - 数据库初始化完成
+2025-12-19 09:23:22.829 [main] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已启动，监听端口: 1100
+2025-12-19 09:23:22.829 [main] INFO  com.yhm.pop3.server.Pop3Server - 使用虚拟线程处理连接
+2025-12-19 09:31:27.659 [pop3-handler-0] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:53357 (虚拟线程: true, 线程名: pop3-handler-0)
+2025-12-19 09:31:27.667 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <62684.1766107887656@localhost>
+2025-12-19 09:31:27.681 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 09:31:27.720 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 09:31:27.721 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 09:31:27.726 [pop3-handler-0] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 09:31:27.760 [pop3-handler-0] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 6 封邮件
+2025-12-19 09:31:27.772 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 6 messages (1147 octets)
+2025-12-19 09:31:27.776 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: LIST
+2025-12-19 09:31:27.781 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 6 messages (1147 octets)
+2025-12-19 09:31:27.782 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1 200
+2025-12-19 09:31:27.783 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 2 198
+2025-12-19 09:31:27.784 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 3 139
+2025-12-19 09:31:27.784 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 4 199
+2025-12-19 09:31:27.785 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 5 200
+2025-12-19 09:31:27.785 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 6 211
+2025-12-19 09:31:27.786 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:31:27.792 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 1
+2025-12-19 09:31:27.795 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 200 octets
+2025-12-19 09:31:27.795 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:31:27.796 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:31:27.796 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1111
+2025-12-19 09:31:27.796 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 01:30:47 +0000
+2025-12-19 09:31:27.797 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:31:27.797 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:31:27.797 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:31:27.798 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:31:27.799 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:31:27.800 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:31:27.966 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 1
+2025-12-19 09:31:27.972 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 1 96a5ecd9-e1e2-4209-9763-dfd9132e6a31
+2025-12-19 09:31:27.980 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 2
+2025-12-19 09:31:27.982 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 198 octets
+2025-12-19 09:31:27.982 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:31:27.983 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:31:27.984 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 11
+2025-12-19 09:31:27.984 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 01:30:17 +0000
+2025-12-19 09:31:27.985 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:31:27.986 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:31:27.986 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:31:27.987 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:31:27.988 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:31:27.988 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:31:27.991 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 2
+2025-12-19 09:31:27.993 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 2 29dd5ee6-5c49-4928-8da1-da2d456a3e32
+2025-12-19 09:31:28.012 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 3
+2025-12-19 09:31:28.013 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 139 octets
+2025-12-19 09:31:28.014 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <system@localhost>
+2025-12-19 09:31:28.014 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1
+2025-12-19 09:31:28.015 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: 2025-12-19T08:38:40.557680300+08:00
+2025-12-19 09:31:28.016 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:31:28.017 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:31:28.017 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:31:28.018 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1
+2025-12-19 09:31:28.019 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:31:28.023 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 3
+2025-12-19 09:31:28.026 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 3 6b7cf007-d532-4621-bad8-ed421f4d85dd
+2025-12-19 09:31:28.046 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 4
+2025-12-19 09:31:28.047 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 199 octets
+2025-12-19 09:31:28.047 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:31:28.048 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:31:28.049 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 111
+2025-12-19 09:31:28.049 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 00:22:38 +0000
+2025-12-19 09:31:28.050 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:31:28.051 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:31:28.051 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:31:28.051 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:31:28.052 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:31:28.053 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:31:28.058 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 4
+2025-12-19 09:31:28.059 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 4 502da0e1-85eb-4c79-b068-ac60ec4464bd
+2025-12-19 09:31:28.091 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 5
+2025-12-19 09:31:28.092 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 200 octets
+2025-12-19 09:31:28.093 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:31:28.094 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:31:28.094 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 111
+2025-12-19 09:31:28.094 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 00:07:52 +0000
+2025-12-19 09:31:28.095 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:31:28.095 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:31:28.096 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:31:28.096 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:31:28.097 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 11111
+2025-12-19 09:31:28.098 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:31:28.101 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 5
+2025-12-19 09:31:28.103 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 5 b6b7f773-8655-4ab6-8f23-a75044e3053a
+2025-12-19 09:31:28.130 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 6
+2025-12-19 09:31:28.132 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 211 octets
+2025-12-19 09:31:28.132 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:31:28.132 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:31:28.133 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1111111
+2025-12-19 09:31:28.133 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Thu, 18 Dec 2025 23:36:33 +0000
+2025-12-19 09:31:28.134 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:31:28.134 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:31:28.135 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:31:28.136 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:31:28.136 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 111121212121
+2025-12-19 09:31:28.137 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:31:28.140 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 6
+2025-12-19 09:31:28.142 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 6 faa7dc71-14d6-4e13-97a1-a6636062a3bf
+2025-12-19 09:31:28.166 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 09:31:28.169 [pop3-handler-0] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 09:31:28.172 [pop3-handler-0] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 09:31:28.173 [pop3-handler-0] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:53357
+2025-12-19 09:32:14.036 [pop3-handler-1] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:57692 (虚拟线程: true, 线程名: pop3-handler-1)
+2025-12-19 09:32:14.038 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <62684.1766107934036@localhost>
+2025-12-19 09:32:14.055 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 09:32:14.062 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 09:32:14.064 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 09:32:14.068 [pop3-handler-1] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 09:32:14.072 [pop3-handler-1] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 6 封邮件
+2025-12-19 09:32:14.074 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 6 messages (1147 octets)
+2025-12-19 09:32:14.118 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: LIST
+2025-12-19 09:32:14.119 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 6 messages (1147 octets)
+2025-12-19 09:32:14.119 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1 200
+2025-12-19 09:32:14.121 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 2 198
+2025-12-19 09:32:14.121 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 3 139
+2025-12-19 09:32:14.122 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 4 199
+2025-12-19 09:32:14.122 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 5 200
+2025-12-19 09:32:14.123 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 6 211
+2025-12-19 09:32:14.123 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.140 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 1
+2025-12-19 09:32:14.142 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 200 octets
+2025-12-19 09:32:14.142 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:14.143 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:14.143 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1111
+2025-12-19 09:32:14.143 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 01:30:47 +0000
+2025-12-19 09:32:14.144 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:14.144 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:14.144 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:14.145 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:14.145 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:32:14.146 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.155 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 1
+2025-12-19 09:32:14.156 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 1 96a5ecd9-e1e2-4209-9763-dfd9132e6a31
+2025-12-19 09:32:14.164 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 2
+2025-12-19 09:32:14.165 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 198 octets
+2025-12-19 09:32:14.166 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:14.167 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:14.167 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 11
+2025-12-19 09:32:14.167 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 01:30:17 +0000
+2025-12-19 09:32:14.168 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:14.169 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:14.169 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:14.169 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:14.170 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:32:14.170 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.174 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 2
+2025-12-19 09:32:14.175 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 2 29dd5ee6-5c49-4928-8da1-da2d456a3e32
+2025-12-19 09:32:14.180 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 3
+2025-12-19 09:32:14.181 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 139 octets
+2025-12-19 09:32:14.181 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <system@localhost>
+2025-12-19 09:32:14.182 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1
+2025-12-19 09:32:14.182 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: 2025-12-19T08:38:40.557680300+08:00
+2025-12-19 09:32:14.183 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:14.183 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:14.184 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:14.184 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1
+2025-12-19 09:32:14.184 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.189 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 3
+2025-12-19 09:32:14.190 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 3 6b7cf007-d532-4621-bad8-ed421f4d85dd
+2025-12-19 09:32:14.195 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 4
+2025-12-19 09:32:14.196 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 199 octets
+2025-12-19 09:32:14.196 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:14.197 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:14.197 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 111
+2025-12-19 09:32:14.198 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 00:22:38 +0000
+2025-12-19 09:32:14.199 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:14.199 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:14.200 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:14.200 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:14.201 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:32:14.201 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.204 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 4
+2025-12-19 09:32:14.205 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 4 502da0e1-85eb-4c79-b068-ac60ec4464bd
+2025-12-19 09:32:14.209 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 5
+2025-12-19 09:32:14.210 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 200 octets
+2025-12-19 09:32:14.211 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:14.211 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:14.212 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 111
+2025-12-19 09:32:14.212 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 00:07:52 +0000
+2025-12-19 09:32:14.212 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:14.213 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:14.213 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:14.214 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:14.214 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 11111
+2025-12-19 09:32:14.214 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.219 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 5
+2025-12-19 09:32:14.220 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 5 b6b7f773-8655-4ab6-8f23-a75044e3053a
+2025-12-19 09:32:14.225 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 6
+2025-12-19 09:32:14.226 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 211 octets
+2025-12-19 09:32:14.226 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:14.227 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:14.227 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1111111
+2025-12-19 09:32:14.227 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Thu, 18 Dec 2025 23:36:33 +0000
+2025-12-19 09:32:14.228 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:14.228 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:14.228 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:14.228 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:14.229 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 111121212121
+2025-12-19 09:32:14.229 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.233 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 6
+2025-12-19 09:32:14.234 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 6 faa7dc71-14d6-4e13-97a1-a6636062a3bf
+2025-12-19 09:32:14.241 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 09:32:14.241 [pop3-handler-1] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 09:32:14.242 [pop3-handler-1] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 09:32:14.243 [pop3-handler-1] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:57692
+2025-12-19 09:32:14.885 [pop3-handler-2] INFO  c.y.p.server.Pop3ConnectionHandler - 新 POP3 连接: /127.0.0.1:57694 (虚拟线程: true, 线程名: pop3-handler-2)
+2025-12-19 09:32:14.887 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server ready <62684.1766107934885@localhost>
+2025-12-19 09:32:14.899 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: USER test@localhost
+2025-12-19 09:32:14.907 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK user accepted
+2025-12-19 09:32:14.910 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: PASS ********
+2025-12-19 09:32:14.913 [pop3-handler-2] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已锁定: test@localhost
+2025-12-19 09:32:14.919 [pop3-handler-2] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 为用户 test@localhost 加载了 6 封邮件
+2025-12-19 09:32:14.920 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK maildrop has 6 messages (1147 octets)
+2025-12-19 09:32:14.940 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: LIST
+2025-12-19 09:32:14.941 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 6 messages (1147 octets)
+2025-12-19 09:32:14.941 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1 200
+2025-12-19 09:32:14.942 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 2 198
+2025-12-19 09:32:14.942 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 3 139
+2025-12-19 09:32:14.943 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 4 199
+2025-12-19 09:32:14.943 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 5 200
+2025-12-19 09:32:14.943 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 6 211
+2025-12-19 09:32:14.944 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.960 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 1
+2025-12-19 09:32:14.962 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 200 octets
+2025-12-19 09:32:14.962 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:14.963 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:14.963 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1111
+2025-12-19 09:32:14.963 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 01:30:47 +0000
+2025-12-19 09:32:14.964 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:14.964 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:14.965 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:14.965 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:14.965 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:32:14.966 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:14.969 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 1
+2025-12-19 09:32:14.970 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 1 96a5ecd9-e1e2-4209-9763-dfd9132e6a31
+2025-12-19 09:32:15.006 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 2
+2025-12-19 09:32:15.007 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 198 octets
+2025-12-19 09:32:15.008 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:15.008 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:15.009 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 11
+2025-12-19 09:32:15.009 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 01:30:17 +0000
+2025-12-19 09:32:15.010 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:15.011 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:15.011 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:15.011 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:15.012 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:32:15.013 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:15.018 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 2
+2025-12-19 09:32:15.018 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 2 29dd5ee6-5c49-4928-8da1-da2d456a3e32
+2025-12-19 09:32:15.055 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 3
+2025-12-19 09:32:15.056 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 139 octets
+2025-12-19 09:32:15.056 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <system@localhost>
+2025-12-19 09:32:15.057 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1
+2025-12-19 09:32:15.057 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: 2025-12-19T08:38:40.557680300+08:00
+2025-12-19 09:32:15.057 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:15.058 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:15.058 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:15.058 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1
+2025-12-19 09:32:15.058 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:15.061 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 3
+2025-12-19 09:32:15.062 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 3 6b7cf007-d532-4621-bad8-ed421f4d85dd
+2025-12-19 09:32:15.090 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 4
+2025-12-19 09:32:15.091 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 199 octets
+2025-12-19 09:32:15.091 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:15.092 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:15.092 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 111
+2025-12-19 09:32:15.092 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 00:22:38 +0000
+2025-12-19 09:32:15.092 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:15.092 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:15.093 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:15.093 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:15.093 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 1111
+2025-12-19 09:32:15.093 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:15.097 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 4
+2025-12-19 09:32:15.098 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 4 502da0e1-85eb-4c79-b068-ac60ec4464bd
+2025-12-19 09:32:15.139 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 5
+2025-12-19 09:32:15.140 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 200 octets
+2025-12-19 09:32:15.140 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:15.140 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:15.141 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 111
+2025-12-19 09:32:15.141 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Fri, 19 Dec 2025 00:07:52 +0000
+2025-12-19 09:32:15.141 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:15.141 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:15.141 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:15.142 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:15.144 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 11111
+2025-12-19 09:32:15.144 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:15.147 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 5
+2025-12-19 09:32:15.149 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 5 b6b7f773-8655-4ab6-8f23-a75044e3053a
+2025-12-19 09:32:15.190 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: RETR 6
+2025-12-19 09:32:15.192 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 211 octets
+2025-12-19 09:32:15.192 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: From: <admin@localhost>
+2025-12-19 09:32:15.192 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: To: <test@localhost>
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Subject: 1111111
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Date: Thu, 18 Dec 2025 23:36:33 +0000
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: MIME-Version: 1.0
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Type: text/plain; charset=utf-8
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: Content-Transfer-Encoding: 8bit
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: 111121212121
+2025-12-19 09:32:15.193 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: .
+2025-12-19 09:32:15.197 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: UIDL 6
+2025-12-19 09:32:15.198 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK 6 faa7dc71-14d6-4e13-97a1-a6636062a3bf
+2025-12-19 09:32:15.244 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 收到: QUIT
+2025-12-19 09:32:15.245 [pop3-handler-2] DEBUG com.yhm.pop3.db.Pop3EmailRepository - 邮箱已解锁: test@localhost
+2025-12-19 09:32:15.245 [pop3-handler-2] DEBUG c.y.p.server.Pop3ConnectionHandler - 发送: +OK localhost POP3 server signing off (0 messages deleted)
+2025-12-19 09:32:15.246 [pop3-handler-2] INFO  c.y.p.server.Pop3ConnectionHandler - POP3 连接关闭: /127.0.0.1:57694
+2025-12-19 09:33:58.590 [Pop3MailPool:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Thread starvation or clock leap detected (housekeeper delta=1m35s595ms756µs300ns).
+2025-12-19 09:35:13.415 [Pop3MailPool:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Thread starvation or clock leap detected (housekeeper delta=1m14s826ms295µs500ns).
+2025-12-19 10:13:45.046 [Pop3MailPool:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Thread starvation or clock leap detected (housekeeper delta=35m31s617ms450µs200ns).
+2025-12-19 16:35:16.938 [Pop3MailPool:housekeeper] WARN  com.zaxxer.hikari.pool.PoolBase - Pop3MailPool - Failed to validate connection org.postgresql.jdbc.PgConnection@65912c55 (This connection has been closed.). Possibly consider using a shorter maxLifetime value.
+2025-12-19 16:35:22.185 [Pop3MailPool:housekeeper] WARN  com.zaxxer.hikari.pool.PoolBase - Pop3MailPool - Failed to validate connection org.postgresql.jdbc.PgConnection@7cd68ad (This connection has been closed.). Possibly consider using a shorter maxLifetime value.
+2025-12-19 16:35:23.132 [Pop3MailPool:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - Pop3MailPool - Thread starvation or clock leap detected (housekeeper delta=6h21m43s540ms210µs400ns).
+2025-12-19 16:41:44.984 [virtual-41] INFO  com.yhm.pop3.Pop3ServerMain - 收到关闭信号，正在停止 POP3 服务器...
+2025-12-19 16:41:44.987 [virtual-41] INFO  com.yhm.pop3.server.Pop3Server - 正在停止 POP3 服务器...
+2025-12-19 16:41:44.987 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown initiated...
+2025-12-19 16:41:44.994 [virtual-41] INFO  com.zaxxer.hikari.HikariDataSource - Pop3MailPool - Shutdown completed.
+2025-12-19 16:41:44.995 [virtual-41] INFO  com.yhm.pop3.db.DatabaseConfig - 数据库连接池已关闭
+2025-12-19 16:41:44.995 [virtual-41] INFO  com.yhm.pop3.server.Pop3Server - POP3 服务器已停止
